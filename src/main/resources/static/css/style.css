@@ -1,0 +1,921 @@
+/* ============================================
+   TÜRKBANK - PREMIUM BANKACILIK TEMASI
+   ============================================ */
+
+/* --- CSS DEĞİŞKENLERİ (Renk Paleti) --- */
+:root {
+    --primary: #0a1628;         /* Koyu lacivert */
+    --primary-light: #132240;
+    --primary-dark: #060e1a;
+    --gold: #c9a84c;            /* Altın - vurgu rengi */
+    --gold-light: #d4b966;
+    --gold-dark: #a88a35;
+    --surface: #ffffff;
+    --surface-alt: #f5f7fa;
+    --text: #1a1a2e;
+    --text-light: #6b7280;
+    --text-muted: #9ca3af;
+    --success: #10b981;
+    --error: #ef4444;
+    --warning: #f59e0b;
+    --border: #e5e7eb;
+    --shadow: 0 4px 24px rgba(10, 22, 40, 0.08);
+    --shadow-lg: 0 8px 40px rgba(10, 22, 40, 0.12);
+    --radius: 12px;
+    --radius-lg: 20px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- SIFIRLAMA & TEMEL --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+}
+
+a {
+    color: var(--gold-dark);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+a:hover {
+    color: var(--gold);
+}
+
+/* ============================================
+   AUTH SAYFALARI (Giriş / Kayıt)
+   ============================================ */
+.auth-body {
+    min-height: 100vh;
+    background: var(--primary);
+}
+
+.auth-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.auth-form-side {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface);
+    padding: 2rem;
+}
+
+.auth-form-wrapper {
+    width: 100%;
+    max-width: 420px;
+}
+
+.auth-logo {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.logo-icon {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+.auth-logo h1 {
+    font-size: 2rem;
+    color: var(--primary);
+    letter-spacing: -0.5px;
+}
+
+.auth-subtitle {
+    color: var(--text-light);
+    font-size: 0.95rem;
+}
+
+.auth-visual-side {
+    flex: 1;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 50%, #1a3a5c 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-visual-side::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(201, 168, 76, 0.1) 0%, transparent 70%);
+    animation: pulse-glow 4s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.1); }
+}
+
+.auth-visual-content {
+    position: relative;
+    z-index: 1;
+    color: white;
+    text-align: center;
+    max-width: 400px;
+}
+
+.auth-visual-content h2 {
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(to right, #fff, var(--gold-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.auth-visual-content p {
+    color: rgba(255,255,255,0.7);
+    font-size: 1.05rem;
+    margin-bottom: 2rem;
+}
+
+.visual-features {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.visual-feature {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--radius);
+    font-size: 0.95rem;
+    transition: var(--transition);
+}
+
+.visual-feature:hover {
+    background: rgba(255,255,255,0.15);
+    transform: translateX(5px);
+}
+
+/* --- FORM STİLLERİ --- */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.form-group label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 0.75rem 1rem;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: var(--transition);
+    background: var(--surface);
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.15);
+}
+
+.form-group input::placeholder {
+    color: var(--text-muted);
+}
+
+/* --- BUTTON'LAR --- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 0.95rem;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(10, 22, 40, 0.3);
+    color: white;
+}
+
+.btn-gold {
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.btn-gold:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(201, 168, 76, 0.4);
+    color: var(--primary);
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--text);
+}
+
+.btn-outline:hover {
+    border-color: var(--gold);
+    color: var(--gold-dark);
+}
+
+.btn-outline-light {
+    background: rgba(255,255,255,0.15);
+    border: 1.5px solid rgba(255,255,255,0.3);
+    color: white;
+}
+
+.btn-outline-light:hover {
+    background: rgba(255,255,255,0.25);
+    color: white;
+}
+
+.btn-full { width: 100%; }
+.btn-sm { padding: 0.5rem 1rem; font-size: 0.85rem; }
+
+/* --- ALERT'LER --- */
+.alert {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.alert-error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+}
+
+.alert-success {
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    color: #065f46;
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+.demo-info {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: var(--surface-alt);
+    border-radius: var(--radius);
+    font-size: 0.85rem;
+    text-align: center;
+    color: var(--text-light);
+}
+
+.demo-info p { margin: 0.2rem 0; }
+
+/* ============================================
+   UYGULAMA SAYFALARI (Panel, Transfer, vs.)
+   ============================================ */
+.app-body {
+    background: var(--surface-alt);
+    min-height: 100vh;
+}
+
+/* --- NAVBAR --- */
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    height: 64px;
+    background: var(--primary);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.logo-icon-sm { font-size: 1.5rem; }
+
+.nav-title {
+    color: white;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 1.25rem;
+    letter-spacing: -0.3px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.nav-link {
+    color: rgba(255,255,255,0.65);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.nav-link:hover {
+    color: white;
+    background: rgba(255,255,255,0.1);
+}
+
+.nav-link.active {
+    color: var(--gold);
+    background: rgba(201, 168, 76, 0.12);
+}
+
+.nav-link-admin {
+    color: var(--gold-light) !important;
+}
+
+.nav-user {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-greeting {
+    color: rgba(255,255,255,0.75);
+    font-size: 0.9rem;
+}
+
+.user-greeting strong {
+    color: white;
+}
+
+.nav-user .btn-outline {
+    border-color: rgba(255,255,255,0.25);
+    color: rgba(255,255,255,0.85);
+}
+
+.nav-user .btn-outline:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.4);
+    color: white;
+}
+
+/* --- ANA İÇERİK --- */
+.main-content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.dashboard-header h1 {
+    font-size: 1.75rem;
+    color: var(--primary);
+}
+
+.dashboard-subtitle {
+    color: var(--text-light);
+    margin-top: 0.25rem;
+}
+
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    font-size: 1.75rem;
+    color: var(--primary);
+}
+
+.page-header p {
+    color: var(--text-light);
+    margin-top: 0.25rem;
+}
+
+/* --- BAKİYE KARTI --- */
+.balance-card {
+    background: linear-gradient(135deg, var(--primary) 0%, #1a3a5c 100%);
+    border-radius: var(--radius-lg);
+    padding: 2.5rem;
+    color: white;
+    margin: 2rem 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.balance-card::after {
+    content: '';
+    position: absolute;
+    top: -30%;
+    right: -10%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(201, 168, 76, 0.15) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.balance-label {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 0.5rem;
+}
+
+.balance-amount {
+    font-family: 'Outfit', sans-serif;
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.balance-amount .currency {
+    font-size: 1.75rem;
+    color: var(--gold);
+    margin-right: 0.25rem;
+}
+
+.balance-actions {
+    display: flex;
+    gap: 1rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* --- HESAP KARTLARI --- */
+.section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 2rem 0 1rem;
+}
+
+.section-title h2 {
+    font-size: 1.25rem;
+    color: var(--primary);
+}
+
+.see-all {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.accounts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.25rem;
+}
+
+.account-card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    border: 1px solid var(--border);
+}
+
+.account-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.account-type {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: var(--primary);
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.account-balance {
+    font-family: 'Outfit', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 1rem 0;
+}
+
+.currency-sm {
+    font-size: 1.25rem;
+    color: var(--gold-dark);
+}
+
+.account-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+}
+
+.account-detail {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.detail-label {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.detail-value {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text);
+}
+
+.iban-text {
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+}
+
+/* --- İŞLEM LİSTESİ --- */
+.transactions-list {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+
+.transaction-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    transition: var(--transition);
+}
+
+.transaction-item:last-child {
+    border-bottom: none;
+}
+
+.transaction-item:hover {
+    background: var(--surface-alt);
+}
+
+.tx-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+.tx-out { background: #fef2f2; color: var(--error); }
+.tx-in { background: #ecfdf5; color: var(--success); }
+
+.tx-info {
+    flex: 1;
+}
+
+.tx-name {
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.tx-desc {
+    font-size: 0.8rem;
+    color: var(--text-light);
+}
+
+.tx-amount {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.amount-out { color: var(--error); }
+.amount-in { color: var(--success); }
+
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+}
+
+/* --- FORM KART --- */
+.form-card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    max-width: 600px;
+    border: 1px solid var(--border);
+}
+
+.transfer-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+/* --- TABLO --- */
+.table-card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table thead {
+    background: var(--primary);
+    color: white;
+}
+
+.data-table th {
+    padding: 1rem;
+    text-align: left;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+.data-table td {
+    padding: 0.85rem 1rem;
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.data-table tbody tr:hover {
+    background: var(--surface-alt);
+}
+
+.ref-no {
+    font-family: monospace;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: var(--surface-alt);
+    color: var(--text);
+}
+
+.badge-success {
+    background: #ecfdf5;
+    color: var(--success);
+}
+
+/* --- SAYFALAMA --- */
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.page-info {
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+
+/* ============================================
+   ANALİTİK DASHBOARD
+   ============================================ */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    padding: 1rem;
+    text-align: center;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    border: 1px solid var(--border);
+    cursor: pointer;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--gold);
+}
+
+.stat-card-warning {
+    border-color: var(--warning);
+}
+
+.stats-grid .chart-card-wide {
+    grid-column: 1 / -1;
+}
+
+.stat-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.stat-value {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 0.25rem;
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.chart-card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+}
+
+.chart-card h3 {
+    font-size: 1rem;
+    color: var(--primary);
+    margin-bottom: 1rem;
+}
+
+.chart-card-wide {
+    grid-column: span 2;
+}
+
+/* ============================================
+   RESPONSİVE TASARIM (Mobil Uyum)
+   ============================================ */
+@media (max-width: 768px) {
+    .auth-container {
+        flex-direction: column;
+    }
+
+    .auth-visual-side {
+        display: none;
+    }
+
+    .navbar {
+        flex-wrap: wrap;
+        height: auto;
+        padding: 0.75rem 1rem;
+        gap: 0.5rem;
+    }
+
+    .nav-links {
+        order: 3;
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .main-content {
+        padding: 1rem;
+    }
+
+    .balance-amount {
+        font-size: 2rem;
+    }
+
+    .balance-actions {
+        flex-direction: column;
+    }
+
+    .accounts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-card-wide {
+        grid-column: span 1;
+    }
+
+    .data-table {
+        font-size: 0.8rem;
+    }
+
+    .data-table th, .data-table td {
+        padding: 0.6rem 0.5rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .user-greeting {
+        display: none;
+    }
+}

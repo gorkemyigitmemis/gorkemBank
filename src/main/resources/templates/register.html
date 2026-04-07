@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kayıt Ol - GörkemBank</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="auth-body">
+    <div class="auth-container">
+        <div class="auth-form-side">
+            <div class="auth-form-wrapper">
+                <div class="auth-logo">
+                    <div class="logo-icon">🏦</div>
+                    <h1>GörkemBank</h1>
+                    <p class="auth-subtitle">Yeni Hesap Oluştur</p>
+                </div>
+
+                <div th:if="${errorMessage}" class="alert alert-error">
+                    <span>⚠️</span>
+                    <span th:text="${errorMessage}"></span>
+                </div>
+
+                <form th:action="@{/kayit}" method="post" class="auth-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="ad">Ad</label>
+                            <input type="text" id="ad" name="ad" placeholder="Adınız" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="soyad">Soyad</label>
+                            <input type="text" id="soyad" name="soyad" placeholder="Soyadınız" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="tcKimlik">TC Kimlik No</label>
+                        <input type="text" id="tcKimlik" name="tcKimlik" placeholder="11 haneli TC Kimlik" maxlength="11" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">E-posta Adresi</label>
+                        <input type="email" id="email" name="email" placeholder="ornek@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="telefon">Telefon</label>
+                        <input type="tel" id="telefon" name="telefon" placeholder="05XX XXX XX XX">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Şifre</label>
+                        <input type="password" id="password" name="password" placeholder="En az 6 karakter" minlength="6" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Kayıt Ol</button>
+                </form>
+
+                <div class="auth-footer">
+                    <p>Zaten hesabınız var mı? <a th:href="@{/giris}">Giriş Yap</a></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="auth-visual-side">
+            <div class="auth-visual-content">
+                <h2>Dijital Bankacılığa Hoş Geldiniz</h2>
+                <p>Hemen hesap oluşturun ve modern bankacılığın ayrıcalıklarını keşfedin.</p>
+                <div class="visual-features">
+                    <div class="visual-feature">🆓 Ücretsiz Hesap</div>
+                    <div class="visual-feature">⚡ Anında Aktif</div>
+                    <div class="visual-feature">🛡️ 7/24 Güvenlik</div>
+                    <div class="visual-feature">📱 Her Yerden Erişim</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

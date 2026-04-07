@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ana Panel - GörkemBank</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="app-body">
+    <!-- Üst Navigasyon -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="logo-icon-sm">🏦</span>
+            <span class="nav-title">GörkemBank</span>
+        </div>
+        <div class="nav-links">
+            <a th:href="@{/panel}" class="nav-link active">Panel</a>
+            <a th:href="@{/transfer}" class="nav-link">Transfer</a>
+            <a th:href="@{/gecmis}" class="nav-link">Geçmiş</a>
+            <a sec:authorize="hasRole('ADMIN')" th:href="@{/analitik}" class="nav-link nav-link-admin">📊 Analitik</a>
+        </div>
+        <div class="nav-user">
+            <span class="user-greeting">Merhaba, <strong th:text="${user.ad}">Kullanıcı</strong></span>
+            <form th:action="@{/cikis}" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-outline btn-sm">Çıkış</button>
+            </form>
+        </div>
+    </nav>
+
+    <!-- Ana İçerik -->
+    <main class="main-content">
+        <div class="dashboard-header">
+            <h1>Hoş Geldiniz, <span th:text="${user.ad}">Kullanıcı</span> 👋</h1>
+            <p class="dashboard-subtitle">Hesaplarınızın özetini aşağıda görebilirsiniz.</p>
+        </div>
+
+        <!-- Bakiye Kartı -->
+        <div class="balance-card">
+            <div class="balance-label">Toplam Bakiye</div>
+            <div class="balance-amount">
+                <span class="currency">₺</span>
+                <span class="amount" th:text="${#numbers.formatDecimal(totalBalance, 1, 'COMMA', 2, 'POINT')}">0,00</span>
+            </div>
+            <div class="balance-actions">
+                <a th:href="@{/transfer}" class="btn btn-gold">💸 Para Transferi</a>
+                <a th:href="@{/gecmis}" class="btn btn-outline-light">📋 İşlem Geçmişi</a>
+            </div>
+        </div>
+
+        <!-- Hesap Kartları -->
+        <div class="section-title">
+            <h2>Hesaplarım</h2>
+        </div>
+        <div class="accounts-grid">
+            <div th:each="account : ${accounts}" class="account-card">
+                <div class="account-type" th:text="${account.accountType}">VADESIZ</div>
+                <div class="account-balance">
+                    <span class="currency-sm">₺</span>
+                    <span th:text="${#numbers.formatDecimal(account.balance, 1, 'COMMA', 2, 'POINT')}">0,00</span>
+                </div>
+                <div class="account-details">
+                    <div class="account-detail">
+                        <span class="detail-label">Hesap No</span>
+                        <span class="detail-value" th:text="${account.accountNumber}">1234567890123456</span>
+                    </div>
+                    <div class="account-detail">
+                        <span class="detail-label">IBAN</span>
+                        <span class="detail-value iban-text" th:text="${account.formattedIban}">TR00 0006 1012 3456 7890 1234 56</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Son İşlemler -->
+        <div class="section-title" th:if="${recentTransactions != null and !recentTransactions.isEmpty()}">
+            <h2>Son İşlemler</h2>
+            <a th:href="@{/gecmis}" class="see-all">Tümünü Gör →</a>
+        </div>
+        <div class="transactions-list" th:if="${recentTransactions != null and !recentTransactions.isEmpty()}">
+            <div th:each="tx : ${recentTransactions}" class="transaction-item">
+                <div class="tx-icon"
+                     th:classappend="${tx.senderAccount.user.id == user.id} ? 'tx-out' : 'tx-in'">
+                    <span th:text="${tx.senderAccount.user.id == user.id} ? '↑' : '↓'">↕</span>
+                </div>
+                <div class="tx-info">
+                    <div class="tx-name"
+                         th:text="${tx.senderAccount.user.id == user.id} ? ${tx.receiverAccount.user.fullName} : ${tx.senderAccount.user.fullName}">
+                        İsim
+                    </div>
+                    <div class="tx-desc" th:text="${tx.description != null} ? ${tx.description} : ${tx.transactionType}">Açıklama</div>
+                </div>
+                <div class="tx-amount"
+                     th:classappend="${tx.senderAccount.user.id == user.id} ? 'amount-out' : 'amount-in'">
+                    <span th:text="${tx.senderAccount.user.id == user.id} ? '-' : '+'"></span>
+                    <span>₺</span>
+                    <span th:text="${#numbers.formatDecimal(tx.amount, 1, 'COMMA', 2, 'POINT')}">0,00</span>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${recentTransactions == null or recentTransactions.isEmpty()}" class="empty-state">
+            <p>📭 Henüz işlem yapılmamış.</p>
+        </div>
+    </main>
+</body>
+</html>

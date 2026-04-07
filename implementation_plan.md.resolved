@@ -1,0 +1,92 @@
+# 🏦 Bankacılık Web Uygulaması — Basitleştirilmiş Plan
+
+> İlk projen olduğu için her şeyi adım adım, sade ve anlaşılır tutuyoruz.
+
+## Ne Yapıyoruz?
+
+Bir **internet bankacılığı uygulaması** — tıpkı Garanti BBVA, Ziraat veya İş Bankası'nın web sitesi gibi. Kullanıcılar:
+- ✅ Kayıt olup giriş yapabilecek
+- ✅ Hesap numarasını ve bakiyesini görebilecek
+- ✅ Başka birine para transferi yapabilecek
+- ✅ İşlem geçmişini inceleyebilecek
+- ✅ Yönetici olarak kullanıcı aktivitelerini analiz edebilecek (veri bilimi kısmı)
+
+## Hangi Teknolojileri Kullanıyoruz?
+
+| Ne? | Araç | Neden? |
+|:---|:---|:---|
+| **Programlama Dili** | Java (zaten biliyorsun!) | Derslerdeki bilgin direkt işe yarar |
+| **Web Framework** | Spring Boot | Java ile web sitesi yapmamızı sağlar |
+| **Veritabanı** | H2 (SQL) | Gerçek SQL kullanır, kurulum gerektirmez, tarayıcıdan tabloları görebilirsin |
+| **HTML Şablon** | Thymeleaf | Java'dan HTML sayfalarına veri göndermemizi sağlar |
+| **Stil** | CSS | Sayfaları güzel gösterir |
+| **Grafikler** | Chart.js | Analytics dashboard'ında grafikler çizer |
+
+> [!NOTE]
+> **H2 nedir?** Tam bir SQL veritabanı — `SELECT`, `INSERT`, `CREATE TABLE` gibi tüm SQL komutlarını destekler. Farkı: MySQL gibi ayrıca kurulum gerektirmez, uygulama ile birlikte otomatik çalışır. Bir de tarayıcıdan (`localhost:8080/h2-console`) tabloları görebilirsin! H2 dosya tabanlı çalışır, yani veriler `banka.mv.db` adlı bir dosyada saklanır.
+
+---
+
+## Geliştirme Adımları
+
+Her adımı birlikte yapacağız. Sana her dosyanın ne işe yaradığını tek tek anlatacağım.
+
+| # | Adım | Açıklama |
+|:---|:---|:---|
+| 1️⃣ | **Proje İskeleti** | Spring Boot projesini oluştur, dosya yapısını kur |
+| 2️⃣ | **Veritabanı Tabloları** | Java sınıflarıyla 5 tablo oluştur (users, accounts, transactions, activity_logs, login_history) |
+| 3️⃣ | **Kayıt & Giriş** | Kullanıcı kayıt + giriş sistemi |
+| 4️⃣ | **Ana Panel** | Giriş sonrası bakiye ve hesap bilgileri |
+| 5️⃣ | **Para Transferi** | IBAN ile başka hesaba para gönderme |
+| 6️⃣ | **İşlem Geçmişi** | Geçmiş transferlerin listesi |
+| 7️⃣ | **Aktivite Loglama** | Her tıklamayı veritabanına kaydet (veri bilimi için) |
+| 8️⃣ | **Demo Veriler** | 50 kullanıcı + 500 işlem otomatik üret |
+| 9️⃣ | **Analytics Dashboard** | Grafiklerle kullanıcı davranış analizi |
+| 🔟 | **Tasarım Bitişi** | CSS ile profesyonel bankacılık görünümü |
+
+---
+
+## Proje Dosya Yapısı (Önceden Bilmen İçin)
+
+```
+banka/
+├── pom.xml                    ← Projenin "malzeme listesi" (hangi kütüphaneleri kullanıyoruz)
+├── mvnw, mvnw.cmd             ← Maven Wrapper (Maven kurmana gerek kalmaz)
+│
+├── src/main/java/com/banka/   ← Java kodlarımız
+│   ├── BankaApplication.java  ← Uygulamayı başlatan ana dosya
+│   ├── model/                 ← Veritabanı tabloları (Java sınıfları)
+│   ├── repository/            ← Veritabanı sorguları
+│   ├── service/               ← İş mantığı (para transferi kuralları vs.)
+│   ├── controller/            ← URL yönlendirme (hangi sayfa ne gösterir)
+│   ├── config/                ← Güvenlik ayarları
+│   └── filter/                ← Aktivite loglama
+│
+├── src/main/resources/
+│   ├── application.properties ← Uygulama ayarları
+│   ├── templates/             ← HTML sayfaları
+│   └── static/css/            ← CSS stil dosyaları
+│
+└── data_science/              ← Veri bilimi scriptleri
+```
+
+> [!TIP]
+> **Spring Boot'un katmanlı yapısı şöyle çalışır:**
+> 1. Kullanıcı tarayıcıda bir sayfaya gider → **Controller** yakalar
+> 2. Controller, iş mantığı için **Service**'i çağırır
+> 3. Service, veritabanı işlemi için **Repository**'i kullanır
+> 4. Repository, **Model** sınıfına göre veritabanıyla konuşur
+> 5. Sonuç **Template**'e (HTML) gönderilir ve kullanıcıya gösterilir
+
+---
+
+## Onay Beklenen Kararlar
+
+> [!IMPORTANT]
+> **1. Route dili**: Sayfaların adreslerini nasıl yapalım?
+> - Türkçe: `/giris`, `/kayit`, `/transfer`, `/gecmis`, `/analitik`
+> - İngilizce: `/login`, `/register`, `/transfer`, `/history`, `/analytics`
+> - (CV açısından İngilizce daha iyi olabilir ama sen karar ver)
+
+> [!IMPORTANT]
+> **2. Hazırsan onay ver**, hemen ilk adımdan başlayalım! 🚀

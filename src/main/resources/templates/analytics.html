@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analitik Dashboard - GörkemBank</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <!-- Chart.js: JavaScript grafik kütüphanesi -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body class="app-body">
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="logo-icon-sm">🏦</span>
+            <span class="nav-title">GörkemBank</span>
+        </div>
+        <div class="nav-links">
+            <a th:href="@{/panel}" class="nav-link">Panel</a>
+            <a th:href="@{/transfer}" class="nav-link">Transfer</a>
+            <a th:href="@{/gecmis}" class="nav-link">Geçmiş</a>
+            <a th:href="@{/analitik}" class="nav-link active nav-link-admin">📊 Analitik</a>
+        </div>
+        <div class="nav-user">
+            <form th:action="@{/cikis}" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-outline btn-sm">Çıkış</button>
+            </form>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h1>📊 Veri Analitik Dashboard</h1>
+            <p>Kullanıcı aktivite verileri ve sistem istatistikleri</p>
+        </div>
+
+        <!-- Özet Kartları -->
+        <div class="stats-grid">
+            <div class="stat-card active-card" id="card-users" onclick="selectStatCard(this, 'kullanici-trendi', 'Kullanıcı Kayıt Trendi', '#ec4899')">
+                <div class="stat-icon">👥</div>
+                <div class="stat-value" th:text="${totalUsers}">0</div>
+                <div class="stat-label">Toplam Kullanıcı</div>
+            </div>
+            <div class="stat-card" id="card-txs" onclick="selectStatCard(this, 'islem-trendi', 'İşlem Trendi', '#3b82f6')">
+                <div class="stat-icon">💰</div>
+                <div class="stat-value" th:text="${totalTransactions}">0</div>
+                <div class="stat-label">Toplam İşlem</div>
+            </div>
+            <div class="stat-card" id="card-logs" onclick="selectStatCard(this, 'gunluk-aktivite', 'Aktivite Log Trendi', '#10b981')">
+                <div class="stat-icon">📊</div>
+                <div class="stat-value" th:text="${totalLogs}">0</div>
+                <div class="stat-label">Aktivite Logu</div>
+            </div>
+            <div class="stat-card" id="card-logins" onclick="selectStatCard(this, 'giris-trendi', 'Başarılı Giriş Trendi', '#8b5cf6')">
+                <div class="stat-icon">🔐</div>
+                <div class="stat-value" th:text="${totalLogins}">0</div>
+                <div class="stat-label">Başarılı Giriş</div>
+            </div>
+            <div class="stat-card" id="card-failedlogins" onclick="selectStatCard(this, 'basarisiz-giris-trendi', 'Başarısız Giriş Trendi', '#ef4444')">
+                <div class="stat-icon">⚠️</div>
+                <div class="stat-value" th:text="${failedLogins}">0</div>
+                <div class="stat-label">Başarısız Giriş</div>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            <!-- Ana Trend Grafiği -->
+            <div class="chart-card chart-card-wide" id="mainChartContainer">
+                <h3 id="mainChartTitle">📈 Seçilen Trend: Kullanıcı Kayıt Trendi</h3>
+                <canvas id="dailyActivityChart"></canvas>
+            </div>
+
+            <!-- Saat Bazlı Aktivite -->
+            <div class="chart-card chart-card-wide">
+                <h3>🕐 Saat Bazlı Aktivite Dağılımı</h3>
+                <canvas id="hourlyChart"></canvas>
+            </div>
+
+            <!-- Cihaz Dağılımı -->
+            <div class="chart-card">
+                <h3>📱 Cihaz Dağılımı</h3>
+                <canvas id="deviceChart"></canvas>
+            </div>
+
+            <!-- Eylem Dağılımı -->
+            <div class="chart-card">
+                <h3>🎯 Eylem Türü Dağılımı</h3>
+                <canvas id="actionChart"></canvas>
+            </div>
+
+            <!-- Giriş Trendleri -->
+            <div class="chart-card chart-card-wide">
+                <h3>🔑 Günlük Giriş Trendleri</h3>
+                <canvas id="loginTrendChart"></canvas>
+            </div>
+
+            <!-- Sayfa Ziyaretleri -->
+            <div class="chart-card chart-card-wide">
+                <h3>📄 Sayfa Ziyaret İstatistikleri</h3>
+                <canvas id="pageVisitChart"></canvas>
+            </div>
+        </div>
+    </main>
+
+    <script th:src="@{/js/app.js}"></script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giriş - GörkemBank</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="auth-body">
+    <div class="auth-container">
+        <!-- Sol taraf: Form -->
+        <div class="auth-form-side">
+            <div class="auth-form-wrapper">
+                <div class="auth-logo">
+                    <div class="logo-icon">🏦</div>
+                    <h1>GörkemBank</h1>
+                    <p class="auth-subtitle">Dijital Bankacılık</p>
+                </div>
+
+                <!-- Hata mesajı -->
+                <div th:if="${errorMessage}" class="alert alert-error">
+                    <span>⚠️</span>
+                    <span th:text="${errorMessage}"></span>
+                </div>
+
+                <!-- Başarı mesajı -->
+                <div th:if="${successMessage}" class="alert alert-success">
+                    <span>✅</span>
+                    <span th:text="${successMessage}"></span>
+                </div>
+
+                <!-- Giriş Formu -->
+                <form th:action="@{/giris}" method="post" class="auth-form">
+                    <div class="form-group">
+                        <label for="email">E-posta Adresi</label>
+                        <input type="email" id="email" name="email" placeholder="ornek@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Şifre</label>
+                        <input type="password" id="password" name="password" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Giriş Yap</button>
+                </form>
+
+                <div class="auth-footer">
+                    <p>Hesabınız yok mu? <a th:href="@{/kayit}">Kayıt Ol</a></p>
+                </div>
+
+                <div class="demo-info">
+                    <p><strong>Demo Giriş:</strong></p>
+                    <p>👤 demo@banka.com / demo123</p>
+                    <p>👑 admin@banka.com / admin123</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sağ taraf: Görsel -->
+        <div class="auth-visual-side">
+            <div class="auth-visual-content">
+                <h2>Güvenli Bankacılık</h2>
+                <p>Hesaplarınızı yönetin, para transferi yapın, işlem geçmişinizi görüntüleyin.</p>
+                <div class="visual-features">
+                    <div class="visual-feature">💰 Anlık Bakiye Görüntüleme</div>
+                    <div class="visual-feature">🔄 Hızlı Para Transferi</div>
+                    <div class="visual-feature">📊 İşlem Geçmişi</div>
+                    <div class="visual-feature">🔒 Güvenli Altyapı</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
