@@ -5,6 +5,7 @@ import com.banka.service.ActivityLogService;
 import com.banka.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,10 +35,14 @@ public class AuthController {
     private ActivityLogService activityLogService;
 
     /**
-     * Ana sayfa → giriş sayfasına yönlendir
+     * Ana sayfa → role göre yönlendir
      */
     @GetMapping("/")
-    public String home() {
+    public String home(Authentication authentication) {
+        if (authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+            return "redirect:/analitik";
+        }
         return "redirect:/panel";
     }
 

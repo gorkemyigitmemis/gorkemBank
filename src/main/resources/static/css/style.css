@@ -919,3 +919,231 @@ a:hover {
         display: none;
     }
 }
+
+/* ============================================
+   ADMIN LOGLAR SAYFASI
+   ============================================ */
+
+/* Arama Çubuğu */
+.search-bar-container {
+    margin-bottom: 1.5rem;
+}
+
+.search-form {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.search-input-wrap {
+    position: relative;
+    flex: 1;
+    max-width: 480px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    pointer-events: none;
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.7rem 1rem 0.7rem 2.5rem;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+    font-family: 'Inter', sans-serif;
+    background: var(--surface);
+    color: var(--text);
+    transition: var(--transition);
+    outline: none;
+}
+
+.search-input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.15);
+}
+
+.search-input::placeholder {
+    color: var(--text-muted);
+}
+
+.logs-table-container {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+
+.logs-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.logs-table thead {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+}
+
+.logs-table th {
+    padding: 1rem 0.75rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.logs-table td {
+    padding: 0.85rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+}
+
+.logs-table tbody tr {
+    transition: var(--transition);
+}
+
+.logs-table tbody tr:nth-child(even) {
+    background: var(--surface-alt);
+}
+
+.logs-table tbody tr:hover {
+    background: rgba(201, 168, 76, 0.08);
+    transform: scale(1.001);
+}
+
+/* Log tablosu hücre stilleri */
+.log-date small {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+.log-user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.log-user-name {
+    font-weight: 600;
+    color: var(--text);
+}
+
+.log-user-email {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+.log-amount {
+    font-weight: 700;
+    color: var(--primary);
+    font-family: 'Outfit', sans-serif;
+    white-space: nowrap;
+}
+
+.log-description {
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text-light);
+}
+
+.log-ref code {
+    background: var(--surface-alt);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-family: 'Courier New', monospace;
+}
+
+/* Badge stilleri */
+.badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.badge-success {
+    background: rgba(16, 185, 129, 0.12);
+    color: #059669;
+}
+
+.badge-danger {
+    background: rgba(239, 68, 68, 0.12);
+    color: #dc2626;
+}
+
+.badge-warning {
+    background: rgba(245, 158, 11, 0.12);
+    color: #d97706;
+}
+
+.badge-type {
+    background: rgba(59, 130, 246, 0.12);
+    color: #2563eb;
+}
+
+/* Sayfalama */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    padding: 1rem;
+}
+
+.pagination-btn {
+    padding: 0.6rem 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transition);
+    box-shadow: var(--shadow);
+}
+
+.pagination-btn:hover:not(.disabled) {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.pagination-btn.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
+.pagination-info {
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+/* Responsive - Loglar tablosu */
+@media (max-width: 1024px) {
+    .logs-table-container {
+        overflow-x: auto;
+    }
+    .logs-table {
+        min-width: 900px;
+    }
+}
+

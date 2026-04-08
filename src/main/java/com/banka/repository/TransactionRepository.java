@@ -40,4 +40,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     // Günlük işlem sayısı (Analytics)
     @Query("SELECT CAST(t.createdAt AS DATE), COUNT(t) FROM Transaction t GROUP BY CAST(t.createdAt AS DATE) ORDER BY CAST(t.createdAt AS DATE)")
     List<Object[]> countByDay();
+
+    // Tüm işlemleri tarih sırasına göre getir (Admin Logları için)
+    @Query("SELECT t FROM Transaction t JOIN FETCH t.senderAccount sa JOIN FETCH sa.user JOIN FETCH t.receiverAccount ra JOIN FETCH ra.user ORDER BY t.createdAt DESC")
+    List<Transaction> findAllWithUsers();
 }

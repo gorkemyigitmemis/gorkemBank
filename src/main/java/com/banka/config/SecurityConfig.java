@@ -1,96 +1,108 @@
 package com.banka.config;
 
 import com.banka.service.UserService;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+
+import java.io.IOException;
 
 /**
  * GÜVENLİK YAPILANDIRMASI
  * 
  * Spring Security'nin nasıl çalışacağını burada belirliyoruz:
  * - Hangi sayfalar herkese açık? (login, kayıt, CSS dosyaları)
- * - Hangi sayfalar giriş gerektiriyor? (panel, transfer, geçmiş)
- * - Hangi sayfalar admin yetkisi gerektiriyor? (analitik)
+ * - Hangi sayfalar USER rolü gerektiriyor? (panel, transfer, geçmiş)
+ * - Hangi sayfalar ADMIN rolü gerektiriyor? (analitik, loglar)
  * - Giriş/çıkış nasıl çalışacak?
- * 
- * @Configuration: Bu sınıf yapılandırma sınıfıdır
- * @EnableWebSecurity: Spring Security'i aktif et
+ * - Admin giriş yapınca /analitik'e, User giriş yapınca /panel'e yönlendir
  */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    /**
-     * Şifre hashleme yöntemi: BCrypt
-     * @Bean: Spring bu metodu çağırır ve ürettiği nesneyi hafızada tutar.
-     * Projede herhangi bir yerde PasswordEncoder gerektiğinde bunu kullanır.
-     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    /**
-     * Kimlik doğrulama sağlayıcısı
-     * Spring Security'ye "kullanıcıları nereden bulacağını" söyler
-     */
     @Bean
     public DaoAuthenticationProvider authenticationProvider(UserService userService) {
         DaoAuthenticationProvider auth = new DaoAuthenticationProvider();
-        auth.setUserDetailsService(userService);      // Kullanıcıları UserService'den al
-        auth.setPasswordEncoder(passwordEncoder());    // Şifreleri BCrypt ile karşılaştır
+        auth.setUserDetailsService(userService);
+        auth.setPasswordEncoder(passwordEncoder());
         return auth;
     }
 
     /**
-     * ANA GÜVENLİK AYARLARI
-     * Hangi URL'ye kim erişebilir?
+     * Rol bazlı giriş yönlendirmesi
+     * Admin → /analitik, User → /panel
      */
+    @Bean
+    public AuthenticationSuccessHandler roleBasedSuccessHandler() {
+        return new AuthenticationSuccessHandler() {
+            @Override
+            public void onAuthenticationSuccess(HttpServletRequest request,
+                                                HttpServletResponse response,
+                                                Authentication authentication) throws IOException, ServletException {
+                if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
+                    response.sendRedirect("/analitik");
+                } else {
+                    response.sendRedirect("/panel");
+                }
+            }
+        };
+    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            // CSRF korumasını aktif tut (form tabanlı saldırılara karşı)
-            // H2 Console için devre dışı bırakmamız gerekiyor (geliştirme ortamı)
             .csrf(csrf -> csrf
                 .ignoringRequestMatchers("/h2-console/**")
             )
 
-            // H2 Console iframe'de çalıştığı için frame options'ı ayarlıyoruz
             .headers(headers -> headers
                 .frameOptions(frame -> frame.sameOrigin())
             )
 
             // URL BAZLI YETKİLENDİRME
             .authorizeHttpRequests(auth -> auth
-                // Bu sayfalar HERKESE açık (giriş yapmadan erişilebilir)
+                // Herkese açık sayfalar
                 .requestMatchers("/giris", "/kayit", "/css/**", "/js/**", "/img/**", "/h2-console/**").permitAll()
-                // Analytics sadece ADMIN görebilir
-                .requestMatchers("/analitik/**").hasRole("ADMIN")
+                // Analitik ve Loglar sadece ADMIN görebilir
+                .requestMatchers("/analitik/**", "/loglar/**").hasRole("ADMIN")
+                // Panel, Transfer, Geçmiş sadece USER görebilir (Admin göremez)
+                .requestMatchers("/panel", "/transfer", "/gecmis").hasRole("USER")
                 // Geri kalan her şey GİRİŞ GEREKTİRİR
                 .anyRequest().authenticated()
             )
 
             // GİRİŞ SAYFASI AYARLARI
             .formLogin(form -> form
-                .loginPage("/giris")                    // Giriş sayfası URL'si
-                .loginProcessingUrl("/giris")           // Form POST edilince buraya git
-                .usernameParameter("email")             // Form'daki email alanının adı
-                .passwordParameter("password")           // Form'daki şifre alanının adı
-                .defaultSuccessUrl("/panel", true)      // Başarılı giriş sonrası yönlendir
-                .failureUrl("/giris?hata=true")         // Başarısız giriş
+                .loginPage("/giris")
+                .loginProcessingUrl("/giris")
+                .usernameParameter("email")
+                .passwordParameter("password")
+                .successHandler(roleBasedSuccessHandler())  // Rol bazlı yönlendirme
+                .failureUrl("/giris?hata=true")
                 .permitAll()
             )
 
             // ÇIKIŞ AYARLARI
             .logout(logout -> logout
-                .logoutUrl("/cikis")                    // Çıkış URL'si
-                .logoutSuccessUrl("/giris?cikis=true")  // Çıkış sonrası yönlendir
+                .logoutUrl("/cikis")
+                .logoutSuccessUrl("/giris?cikis=true")
                 .permitAll()
             );
 

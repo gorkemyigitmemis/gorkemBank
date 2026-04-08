@@ -143,4 +143,23 @@ public class TransactionService {
     public List<Object[]> getDailyTransactionCount() {
         return transactionRepository.countByDay();
     }
+
+    /**
+     * Tüm işlemleri sayfalı olarak getir (Admin Logları için)
+     */
+    public List<Transaction> getAllTransactions() {
+        return transactionRepository.findAllWithUsers();
+    }
+
+    public List<Transaction> getAllTransactionsPaginated(int page, int size) {
+        List<Transaction> all = transactionRepository.findAllWithUsers();
+        int start = Math.min(page * size, all.size());
+        int end = Math.min(start + size, all.size());
+        return all.subList(start, end);
+    }
+
+    public int getAllTransactionsTotalPages(int size) {
+        long total = transactionRepository.count();
+        return (int) Math.ceil((double) total / size);
+    }
 }
