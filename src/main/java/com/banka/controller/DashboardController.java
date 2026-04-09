@@ -60,8 +60,19 @@ public class DashboardController {
                 .map(Account::getBalance)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        // Kullanıcının portföyünü getir
+        // Döviz kurlarını getir (Makas eklentili)
+        Map<String, Double> buyRates = exchangeRateService.getBuyRates();
+        Map<String, Double> sellRates = exchangeRateService.getSellRates();
+
+        // Kullanıcının portföyünü getir ve toplam TL değerini (bozdurma kuruyla) hesapla
         List<Portfolio> portfolios = portfolioService.getUserPortfolios(user.getId());
+        BigDecimal portfolioTotalTry = BigDecimal.ZERO;
+        for (Portfolio p : portfolios) {
+            Double sellRate = sellRates.get(p.getCurrency());
+            if (sellRate != null) {
+                portfolioTotalTry = portfolioTotalTry.add(p.getAmount().multiply(BigDecimal.valueOf(sellRate)));
+            }
+        }
 
         // İlk hesabın son 5 işlemini getir (varsa)
         List<Transaction> recentTransactions = null;
@@ -70,16 +81,15 @@ public class DashboardController {
                     accounts.get(0).getId(), 5);
         }
 
-        // Döviz kurlarını getir
-        Map<String, Double> rates = exchangeRateService.getExchangeRates();
-
         // HTML sayfasına verileri gönder
         model.addAttribute("user", user);
         model.addAttribute("accounts", accounts);
         model.addAttribute("totalBalance", totalBalance);
         model.addAttribute("portfolios", portfolios);
+        model.addAttribute("portfolioTotalTry", portfolioTotalTry);
         model.addAttribute("recentTransactions", recentTransactions);
-        model.addAttribute("exchangeRates", rates);
+        model.addAttribute("buyRates", buyRates);
+        model.addAttribute("sellRates", sellRates);
 
         return "dashboard";
     }

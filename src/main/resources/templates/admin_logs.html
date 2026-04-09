@@ -31,14 +31,17 @@
             <p>Bankadaki tüm para akışı • Toplam <strong th:text="${totalTransactions}">0</strong> işlem kaydı</p>
         </div>
 
-        <!-- Arama Çubuğu -->
-        <div class="search-bar-container">
-            <div class="logs-header">
-                <form th:action="@{/loglar}" method="get" class="search-form">
+        <!-- Özellikler ve Arama -->
+        <div class="search-bar-container" style="display: flex; flex-direction: column; gap: 1rem;">
+            <!-- Üst Kontroller -->
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <form th:action="@{/loglar}" method="get" class="search-form" style="margin: 0; flex: 1;">
                     <input type="text" name="q" class="search-input" th:value="${searchQuery}" placeholder="Kişi Ara (Örn: Seda Yıldız veya E-posta)...">
                     <button type="submit" class="btn btn-gold">Arama Yap</button>
                     <a th:if="${searchQuery != null}" th:href="@{/loglar}" class="btn btn-outline">Temizle</a>
                 </form>
+
+                <a th:href="@{/loglar/supheli}" class="btn" style="background: rgba(255, 77, 79, 0.1); color: #ff4d4f; border: 1px solid #ff4d4f; white-space: nowrap;">🚨 Şüpheli IBAN Tara</a>
             </div>
 
             <!-- Kişi Arama Sonucu Profili -->

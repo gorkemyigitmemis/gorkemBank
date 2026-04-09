@@ -87,4 +87,11 @@ public class AdminLogController {
 
         return "admin_logs";
     }
+
+    @GetMapping("/loglar/supheli")
+    public String suspiciousLogs(Model model) {
+        List<Object[]> suspiciousAccounts = transactionService.getSuspiciousAccounts();
+        model.addAttribute("suspiciousAccounts", suspiciousAccounts);
+        return "admin_logs_supheli";
+    }
 }

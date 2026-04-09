@@ -38,8 +38,10 @@ public class ExchangeController {
                               RedirectAttributes redirectAttributes) {
         try {
             User user = userService.findByEmail(authentication.getName());
-            Map<String, Double> rates = exchangeRateService.getExchangeRates();
-            Double rateDouble = rates.get(currency);
+            
+            // Eğer müşteri döviz alıyorsa, bankanın "satış" fiyatı olan buyRate (yüksek) üzerinden alınır
+            Map<String, Double> buyRates = exchangeRateService.getBuyRates();
+            Double rateDouble = buyRates.get(currency);
             
             if (rateDouble == null) throw new RuntimeException("Geçersiz kur birimi!");
             
@@ -62,8 +64,10 @@ public class ExchangeController {
                                RedirectAttributes redirectAttributes) {
         try {
             User user = userService.findByEmail(authentication.getName());
-            Map<String, Double> rates = exchangeRateService.getExchangeRates();
-            Double rateDouble = rates.get(currency);
+            
+            // Eğer müşteri döviz satıyorsa, bankanın "alış" fiyatı olan sellRate (düşük) üzerinden gerçekleştirilir
+            Map<String, Double> sellRates = exchangeRateService.getSellRates();
+            Double rateDouble = sellRates.get(currency);
             
             if (rateDouble == null) throw new RuntimeException("Geçersiz kur birimi!");
             

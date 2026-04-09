@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Şüpheli İşlem Radarı - GörkemBank</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="app-body">
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="logo-icon-sm">🏦</span>
+            <span class="nav-title">GörkemBank</span>
+        </div>
+        <div class="nav-links">
+            <a th:href="@{/analitik}" class="nav-link nav-link-admin">📊 Analitik</a>
+            <a th:href="@{/loglar}" class="nav-link active nav-link-admin">📋 Loglar</a>
+        </div>
+        <div class="nav-user">
+            <form th:action="@{/cikis}" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-outline btn-sm">Çıkış</button>
+            </form>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h1 style="color: #ff4d4f;">🕵️‍♂️ Şüpheli İşlem Radarı</h1>
+                <p>Sistemde çok sayıda transfer/işlem yapan şüpheli IBAN adresleri listelenmektedir.</p>
+            </div>
+            <div>
+                <a th:href="@{/loglar}" class="btn btn-outline">Tüm Loglara Dön</a>
+            </div>
+        </div>
+
+        <div class="table-container" style="border: 1px solid rgba(255, 77, 79, 0.3);">
+            <table class="transactions-table">
+                <thead>
+                    <tr style="background: rgba(255, 77, 79, 0.1);">
+                        <th>#</th>
+                        <th>🚨 ŞÜPHELİ IBAN</th>
+                        <th>👤 HESAP SAHİBİ</th>
+                        <th>🔄 İŞLEM SAYISI</th>
+                        <th>DURUM</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${suspiciousAccounts == null or suspiciousAccounts.isEmpty()}" style="text-align: center;">
+                        <td colspan="5">Şu anda tespit edilen şüpheli bir para akışı bulunmamaktadır.</td>
+                    </tr>
+                    <tr th:each="account, iterStat : ${suspiciousAccounts}">
+                        <td th:text="${iterStat.count}">1</td>
+                        <td th:text="${account[0]}" style="font-family: monospace; color: #ffbcbc; letter-spacing: 1px;">TR00 0000</td>
+                        <td th:text="${account[1]} + ' ' + ${account[2]}" style="font-weight: 500;">İsim Soyisim</td>
+                        <td><strong style="color: #ff4d4f; font-size: 1.1rem;" th:text="${account[3]}">0</strong> İşlem Çıkışı</td>
+                        <td>
+                            <span class="badge" style="background: rgba(255, 77, 79, 0.2); color: #ff4d4f; border: 1px solid #ff4d4f;">Yüksek Risk</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</body>
+</html>

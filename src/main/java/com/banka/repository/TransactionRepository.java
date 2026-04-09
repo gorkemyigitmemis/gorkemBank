@@ -44,4 +44,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     // Tüm işlemleri tarih sırasına göre getir (Admin Logları için)
     @Query("SELECT t FROM Transaction t JOIN FETCH t.senderAccount sa JOIN FETCH sa.user JOIN FETCH t.receiverAccount ra JOIN FETCH ra.user ORDER BY t.createdAt DESC")
     List<Transaction> findAllWithUsers();
+
+    // Şüpheli Para Akışı Radarı (Çok fazla çıkış yapan IBAN'lar)
+    @Query("SELECT sa.iban, u.ad, u.soyad, COUNT(t) FROM Transaction t JOIN t.senderAccount sa JOIN sa.user u GROUP BY sa.iban, u.ad, u.soyad HAVING COUNT(t) > 3 ORDER BY COUNT(t) DESC")
+    List<Object[]> findSuspiciousAccounts();
 }

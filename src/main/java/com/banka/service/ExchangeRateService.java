@@ -111,4 +111,30 @@ public class ExchangeRateService {
         defaults.put("XAU", 3676.75);
         return defaults;
     }
+
+    /**
+     * Müşterinin bankadan ALACAĞI fiyatlar (Banka Satış Kuru)
+     * Gerçek fiyattan %1.5 daha pahalı
+     */
+    public Map<String, Double> getBuyRates() {
+        Map<String, Double> baseRates = getExchangeRates();
+        Map<String, Double> buyRates = new LinkedHashMap<>();
+        for (Map.Entry<String, Double> entry : baseRates.entrySet()) {
+            buyRates.put(entry.getKey(), entry.getValue() * 1.015);
+        }
+        return buyRates;
+    }
+
+    /**
+     * Müşterinin bankaya SATACAĞI fiyatlar (Banka Alış Kuru)
+     * Gerçek fiyattan %1.5 daha düşük
+     */
+    public Map<String, Double> getSellRates() {
+        Map<String, Double> baseRates = getExchangeRates();
+        Map<String, Double> sellRates = new LinkedHashMap<>();
+        for (Map.Entry<String, Double> entry : baseRates.entrySet()) {
+            sellRates.put(entry.getKey(), entry.getValue() * 0.985);
+        }
+        return sellRates;
+    }
 }

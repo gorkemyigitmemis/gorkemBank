@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * İŞLEM (TRANSFER) SERVİSİ
@@ -138,6 +140,18 @@ public class TransactionService {
      */
     public long getTransactionCount() {
         return transactionRepository.count();
+    }
+
+    public Map<String, Object> getTransactionStats() {
+        Map<String, Object> stats = new HashMap<>();
+        stats.put("totalTransactions", transactionRepository.count());
+        stats.put("successfulTransactions", transactionRepository.countByStatus("BAŞARILI"));
+        stats.put("dailyStats", transactionRepository.countByDay());
+        return stats;
+    }
+
+    public List<Object[]> getSuspiciousAccounts() {
+        return transactionRepository.findSuspiciousAccounts();
     }
 
     public List<Object[]> getDailyTransactionCount() {
