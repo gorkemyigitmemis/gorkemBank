@@ -4,6 +4,7 @@ import com.banka.model.Account;
 import com.banka.model.Transaction;
 import com.banka.model.User;
 import com.banka.service.AccountService;
+import com.banka.service.ExchangeRateService;
 import com.banka.service.TransactionService;
 import com.banka.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 /**
  * DASHBOARD (ANA PANEL) CONTROLLER
@@ -32,6 +34,9 @@ public class DashboardController {
 
     @Autowired
     private TransactionService transactionService;
+
+    @Autowired
+    private ExchangeRateService exchangeRateService;
 
     /**
      * ANA PANEL
@@ -60,11 +65,15 @@ public class DashboardController {
                     accounts.get(0).getId(), 5);
         }
 
+        // Döviz kurlarını getir
+        Map<String, Double> rates = exchangeRateService.getExchangeRates();
+
         // HTML sayfasına verileri gönder
         model.addAttribute("user", user);
         model.addAttribute("accounts", accounts);
         model.addAttribute("totalBalance", totalBalance);
         model.addAttribute("recentTransactions", recentTransactions);
+        model.addAttribute("exchangeRates", rates);
 
         return "dashboard";
     }

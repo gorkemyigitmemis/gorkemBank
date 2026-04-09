@@ -63,7 +63,10 @@
                             <span th:text="${tx.senderAccount.id == currentAccount.id ? '-' : '+'}"></span>₺<span th:text="${#numbers.formatDecimal(tx.amount, 1, 'COMMA', 2, 'POINT')}">0,00</span>
                         </td>
                         <td><span class="badge badge-success" th:text="${tx.status}">BASARILI</span></td>
-                        <td class="ref-no" th:text="${tx.referenceNo}">uuid</td>
+                        <td class="ref-no">
+                            <span th:text="${tx.referenceNo}">uuid</span>
+                            <a th:href="@{'/dekont/' + ${tx.referenceNo}}" target="_blank" class="btn btn-outline-light btn-sm" style="margin-left:8px; padding: 2px 8px; font-size: 0.75rem;">📄 İndir</a>
+                        </td>
                     </tr>
                 </tbody>
             </table>

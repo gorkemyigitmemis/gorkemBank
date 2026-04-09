@@ -36,7 +36,53 @@ document.addEventListener('DOMContentLoaded', function() {
     loadActionChart();
     loadLoginTrendChart();
     loadPageVisitChart();
+    loadSegmentChart(); // Yeni: Segmentasyon
 });
+
+/**
+ * ----------------------------------------------------
+ * 7. Müşteri Segmentasyonu Grafiği (Doughnut Chart)
+ * İşlem hacimlerine göre VIP, Standart, Pasif
+ * ----------------------------------------------------
+ */
+function loadSegmentChart() {
+    fetch('/analitik/api/musteri-segmentleri')
+        .then(response => response.json())
+        .then(data => {
+            const ctx = document.getElementById('segmentChart');
+            if(!ctx) return;
+            
+            // Etiketler: ["VIP", "Standart", "Pasif"]
+            const labels = Object.keys(data);
+            const values = Object.values(data);
+            
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: [
+                            COLORS.gold,     // VIP
+                            COLORS.blue,     // Standart
+                            COLORS.textMuted // Pasif
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '65%',
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        })
+        .catch(err => console.error("Segmentasyon verisi çekilemedi:", err));
+}
 
 let mainActivityChart = null;
 

@@ -120,4 +120,36 @@ public class UserService implements UserDetailsService {
     public List<Object[]> getDailyUserRegistrations() {
         return userRepository.countByDay();
     }
+
+    /**
+     * Müşteri segmentasyonu: Kullanıcıların harcama hacimlerine göre VIP, Standart, Pasif gruplarına ayırır
+     */
+    public java.util.Map<String, Integer> getCustomerSegments() {
+        List<User> allUsers = userRepository.findAll();
+        int vip = 0, standart = 0, pasif = 0;
+
+        for (User user : allUsers) {
+            if ("ADMIN".equals(user.getRole())) continue;
+
+            double totalVolume = user.getAccounts().stream()
+                    .flatMap(acc -> acc.getSentTransactions().stream())
+                    .filter(tx -> "BASARILI".equals(tx.getStatus()))
+                    .mapToDouble(tx -> tx.getAmount().doubleValue())
+                    .sum();
+
+            if (totalVolume > 50000) {
+                vip++;
+            } else if (totalVolume >= 1000) {
+                standart++;
+            } else {
+                pasif++;
+            }
+        }
+
+        java.util.Map<String, Integer> segments = new java.util.HashMap<>();
+        segments.put("VIP", vip);
+        segments.put("Standart", standart);
+        segments.put("Pasif", pasif);
+        return segments;
+    }
 }

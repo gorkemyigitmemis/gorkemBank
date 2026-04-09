@@ -73,6 +73,91 @@
             </div>
         </div>
 
+        <!-- Canlı Döviz Kurları -->
+        <div class="section-title" th:if="${exchangeRates != null}">
+            <h2>Canlı Kurlar & Alım-Satım</h2>
+            <span class="badge badge-success" style="font-size:0.7rem; padding: 2px 6px;">🟢 Canlı</span>
+        </div>
+        <div class="exchange-rates-grid" th:if="${exchangeRates != null}">
+            
+            <!-- USD -->
+            <div class="exchange-card">
+                <div class="exchange-header">
+                    <span class="exchange-flag">🇺🇸</span>
+                    <span class="exchange-currency">USD / TRY</span>
+                </div>
+                <div class="exchange-rate" th:text="${#numbers.formatDecimal(exchangeRates.get('USD'), 1, 'COMMA', 2, 'POINT')}">0,00</div>
+                <div class="exchange-actions">
+                    <form th:action="@{/doviz/al}" method="post">
+                        <input type="hidden" name="currency" value="USD">
+                        <button type="submit" class="btn-exchange btn-buy">Al</button>
+                    </form>
+                    <form th:action="@{/doviz/sat}" method="post">
+                        <input type="hidden" name="currency" value="USD">
+                        <button type="submit" class="btn-exchange btn-sell">Sat</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- EUR -->
+            <div class="exchange-card">
+                <div class="exchange-header">
+                    <span class="exchange-flag">🇪🇺</span>
+                    <span class="exchange-currency">EUR / TRY</span>
+                </div>
+                <div class="exchange-rate" th:text="${#numbers.formatDecimal(exchangeRates.get('EUR'), 1, 'COMMA', 2, 'POINT')}">0,00</div>
+                <div class="exchange-actions">
+                    <form th:action="@{/doviz/al}" method="post">
+                        <input type="hidden" name="currency" value="EUR">
+                        <button type="submit" class="btn-exchange btn-buy">Al</button>
+                    </form>
+                    <form th:action="@{/doviz/sat}" method="post">
+                        <input type="hidden" name="currency" value="EUR">
+                        <button type="submit" class="btn-exchange btn-sell">Sat</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- GBP -->
+            <div class="exchange-card">
+                <div class="exchange-header">
+                    <span class="exchange-flag">🇬🇧</span>
+                    <span class="exchange-currency">GBP / TRY</span>
+                </div>
+                <div class="exchange-rate" th:text="${#numbers.formatDecimal(exchangeRates.get('GBP'), 1, 'COMMA', 2, 'POINT')}">0,00</div>
+                <div class="exchange-actions">
+                    <form th:action="@{/doviz/al}" method="post">
+                        <input type="hidden" name="currency" value="GBP">
+                        <button type="submit" class="btn-exchange btn-buy">Al</button>
+                    </form>
+                    <form th:action="@{/doviz/sat}" method="post">
+                        <input type="hidden" name="currency" value="GBP">
+                        <button type="submit" class="btn-exchange btn-sell">Sat</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Altın (XAU) -->
+            <div class="exchange-card">
+                <div class="exchange-header">
+                    <span class="exchange-flag">🥇</span>
+                    <span class="exchange-currency">Altın (Gram)</span>
+                </div>
+                <div class="exchange-rate" th:text="${#numbers.formatDecimal(exchangeRates.get('XAU'), 1, 'COMMA', 2, 'POINT')}">0,00</div>
+                <div class="exchange-actions">
+                    <form th:action="@{/doviz/al}" method="post">
+                        <input type="hidden" name="currency" value="XAU">
+                        <button type="submit" class="btn-exchange btn-buy">Al</button>
+                    </form>
+                    <form th:action="@{/doviz/sat}" method="post">
+                        <input type="hidden" name="currency" value="XAU">
+                        <button type="submit" class="btn-exchange btn-sell">Sat</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
         <!-- Son İşlemler -->
         <div class="section-title" th:if="${recentTransactions != null and !recentTransactions.isEmpty()}">
             <h2>Son İşlemler</h2>

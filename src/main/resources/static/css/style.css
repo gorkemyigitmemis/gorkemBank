@@ -771,6 +771,121 @@ a:hover {
     color: var(--text-light);
 }
 
+/* Hesap Kartları */
+.accounts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+/* Döviz Kurları (Yeni) */
+.exchange-rates-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.exchange-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.exchange-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
+    border-color: var(--gold-light);
+}
+
+.exchange-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--gold);
+}
+
+.exchange-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.exchange-flag {
+    font-size: 1.5rem;
+}
+
+.exchange-currency {
+    font-weight: 700;
+    color: var(--text);
+    font-size: 1.1rem;
+}
+
+.exchange-rate {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+    font-family: 'Outfit', sans-serif;
+    margin-bottom: 1rem;
+}
+
+.exchange-rate small {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.exchange-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: auto;
+}
+
+.exchange-actions form {
+    flex: 1;
+}
+
+.btn-exchange {
+    width: 100%;
+    padding: 0.4rem 0;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    border: 1px solid transparent;
+}
+
+.btn-buy {
+    background: rgba(16, 185, 129, 0.1);
+    color: #059669;
+}
+
+.btn-buy:hover {
+    background: #10b981;
+    color: white;
+}
+
+.btn-sell {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+}
+
+.btn-sell:hover {
+    background: #ef4444;
+    color: white;
+}
+
 /* ============================================
    ANALİTİK DASHBOARD
    ============================================ */

@@ -242,4 +242,13 @@ public class AnalyticsController {
         data.put("values", values);
         return data;
     }
+
+    /**
+     * API: Müşteri Segmentasyonu Verisi (JSON)
+     */
+    @GetMapping("/analitik/api/musteri-segmentleri")
+    @ResponseBody
+    public Map<String, Integer> getCustomerSegmentsData() {
+        return userService.getCustomerSegments();
+    }
 }
