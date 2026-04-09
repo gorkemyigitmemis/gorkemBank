@@ -126,7 +126,9 @@ public class DataSeeder implements CommandLineRunner {
             tx.setSenderAccount(sender);
             tx.setReceiverAccount(receiver);
             tx.setAmount(amount);
-            tx.setDescription(aciklamalar[random.nextInt(aciklamalar.length)]);
+            String desc = aciklamalar[random.nextInt(aciklamalar.length)];
+            tx.setDescription(desc);
+            tx.setCategory(determineCategoryFromSeeder(desc)); // V5: Kategori ekle
             tx.setStatus("BASARILI");
             tx.setTransactionType(random.nextInt(3) == 0 ? "EFT" : "HAVALE");
             tx.setCreatedAt(LocalDateTime.now().minusDays(random.nextInt(90))

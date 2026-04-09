@@ -58,9 +58,12 @@ public class Transaction {
     private LocalDateTime createdAt;
 
     // Benzersiz referans numarası - UUID ile üretilir
-    // UUID nedir? Evrensel benzersiz tanımlayıcı. Örn: "550e8400-e29b-41d4-a716-446655440000"
     @Column(unique = true, nullable = false, length = 36)
     private String referenceNo;
+
+    // Harcama Kategorisi (V5)
+    @Column(length = 50)
+    private String category = "Genel";
 
     public Transaction() {
         this.createdAt = LocalDateTime.now();
@@ -98,4 +101,7 @@ public class Transaction {
 
     public String getReferenceNo() { return referenceNo; }
     public void setReferenceNo(String referenceNo) { this.referenceNo = referenceNo; }
+
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
 }

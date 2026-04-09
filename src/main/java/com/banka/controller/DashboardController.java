@@ -90,6 +90,7 @@ public class DashboardController {
         model.addAttribute("recentTransactions", recentTransactions);
         model.addAttribute("buyRates", buyRates);
         model.addAttribute("sellRates", sellRates);
+        model.addAttribute("spendingInsights", transactionService.getSpendingInsights(user.getId()));
 
         return "dashboard";
     }

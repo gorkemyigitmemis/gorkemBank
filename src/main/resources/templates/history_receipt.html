@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İşlem Dekontu - GörkemBank</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script th:src="@{/js/theme.js}"></script>
+    <style>
+        .receipt-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            background: var(--surface);
+            padding: 3rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        .receipt-header {
+            text-align: center;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .receipt-logo { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .receipt-title { font-size: 1.5rem; color: var(--gold); margin: 0; }
+        
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 1px dashed var(--border);
+        }
+        .receipt-label { color: var(--text-light); font-weight: 500; }
+        .receipt-value { font-weight: 600; text-align: right; }
+        
+        .receipt-amount {
+            font-size: 2rem;
+            text-align: center;
+            margin: 2rem 0;
+            color: var(--primary);
+            font-family: 'Outfit', sans-serif;
+        }
+        [data-theme="dark"] .receipt-amount { color: var(--gold); }
+        
+        .receipt-stamp {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 120px;
+            height: 120px;
+            border: 3px solid rgba(16, 185, 129, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            transform: rotate(-15deg);
+            color: rgba(16, 185, 129, 0.5);
+            font-weight: 800;
+            font-size: 0.8rem;
+            pointer-events: none;
+        }
+        
+        @media print {
+            .navbar, .btn-print, .theme-toggle { display: none !important; }
+            .receipt-container { margin: 0; box-shadow: none; border: none; width: 100%; max-width: 100%; }
+            body { background: white !important; color: black !important; }
+        }
+    </style>
+</head>
+<body class="app-body">
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="logo-icon-sm">🏦</span>
+            <span class="nav-title">GörkemBank</span>
+        </div>
+        <div class="nav-links">
+            <a th:href="@{/gecmis}" class="nav-link">← Geri Dön</a>
+        </div>
+        <div class="nav-user">
+            <button type="button" class="theme-toggle" onclick="toggleTheme()">🌙</button>
+            <button onclick="window.print()" class="btn btn-gold btn-print">🖨️ Yazdır / PDF Kaydet</button>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="receipt-container">
+            <div class="receipt-header">
+                <div class="receipt-logo">🏦</div>
+                <h1 class="receipt-title">İŞLEM DEKONTU</h1>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">GörkemBank Anonim Şirketi tarafından üretilmiştir.</p>
+            </div>
+
+            <div class="receipt-amount" th:text="${#numbers.formatDecimal(tx.amount, 1, 'COMMA', 2, 'POINT')} + ' ' + ${tx.currency}">
+                0.00 TRY
+            </div>
+
+            <div class="receipt-row">
+                <span class="receipt-label">İşlem Tarihi</span>
+                <span class="receipt-value" th:text="${#temporals.format(tx.createdAt, 'dd.MM.yyyy HH:mm')}">01.01.2024</span>
+            </div>
+
+            <div class="receipt-row">
+                <span class="receipt-label">Referans No</span>
+                <span class="receipt-value" th:text="${tx.referenceNo}">REF-...</span>
+            </div>
+
+            <div class="receipt-row">
+                <span class="receipt-label">İşlem Tipi</span>
+                <span class="receipt-value" th:text="${tx.transactionType}">HAVALE</span>
+            </div>
+
+            <div style="margin-top: 1.5rem; padding: 1rem; background: var(--surface-alt); border-radius: 8px;">
+                <div style="margin-bottom: 1rem;">
+                    <small style="color: var(--text-light); display: block;">GÖNDERİCİ</small>
+                    <strong th:text="${tx.senderAccount.user.fullName}">İsim Soyisim</strong><br>
+                    <small th:text="'IBAN: ' + ${tx.senderAccount.getFormattedIban()}">IBAN</small>
+                </div>
+                <div>
+                    <small style="color: var(--text-light); display: block;">ALICI</small>
+                    <strong th:text="${tx.receiverAccount.user.fullName}">İsim Soyisim</strong><br>
+                    <small th:text="'IBAN: ' + ${tx.receiverAccount.getFormattedIban()}">IBAN</small>
+                </div>
+            </div>
+
+            <div class="receipt-row" style="margin-top: 1.5rem;">
+                <span class="receipt-label">Açıklama</span>
+                <span class="receipt-value" th:text="${tx.description != null ? tx.description : '-'}">Açıklama</span>
+            </div>
+            
+            <div class="receipt-row">
+                <span class="receipt-label">Kategori</span>
+                <span class="receipt-value" th:text="${tx.category != null ? tx.category : 'Genel'}">Genel</span>
+            </div>
+
+            <div class="receipt-stamp">
+                <span>GÖRKEMBANK</span>
+                <span>ONAYLANDI</span>
+                <span style="font-size: 0.6rem;" th:text="${#temporals.format(tx.createdAt, 'dd/MM/yy')}">01/01/24</span>
+            </div>
+
+            <div style="margin-top: 3rem; font-size: 0.7rem; color: var(--text-muted); text-align: center;">
+                Bu dekont dijital olarak imzalanmıştır ve banka kayıtları ile aynı hükmü taşır. İbrazı halinde geçerlidir.
+            </div>
+        </div>
+    </main>
+</body>
+</html>

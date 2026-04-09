@@ -48,4 +48,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     // Şüpheli Para Akışı Radarı (Çok fazla çıkış yapan IBAN'lar)
     @Query("SELECT sa.iban, u.ad, u.soyad, COUNT(t) FROM Transaction t JOIN t.senderAccount sa JOIN sa.user u GROUP BY sa.iban, u.ad, u.soyad HAVING COUNT(t) > 3 ORDER BY COUNT(t) DESC")
     List<Object[]> findSuspiciousAccounts();
+
+    // Bir kullanıcının yaptığı harcamaları getir (V5)
+    @Query("SELECT t FROM Transaction t WHERE t.senderAccount.user.id = :userId")
+    List<Transaction> findBySenderUserId(@Param("userId") Long userId);
 }

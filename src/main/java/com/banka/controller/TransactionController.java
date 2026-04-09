@@ -108,8 +108,29 @@ public class TransactionController {
             model.addAttribute("currentAccount", accounts.get(0));
         }
 
-        model.addAttribute("user", user);
         model.addAttribute("accounts", accounts);
         return "history";
+    }
+
+    /**
+     * DİJİTAL DEKONT SAYFASI (V5)
+     */
+    @GetMapping("/dekont/{ref}")
+    public String showReceipt(@PathVariable String ref, Authentication authentication, Model model) {
+        Transaction tx = transactionService.getTransactionByReferenceNo(ref);
+        if (tx == null) throw new RuntimeException("Dekont bulunamadı!");
+        
+        // Güvenlik: Kullanıcı sadece kendi gönderdiği veya aldığı dekontu görebilir
+        String email = authentication.getName();
+        User user = userService.findByEmail(email);
+        
+        if (!tx.getSenderAccount().getUser().getId().equals(user.getId()) && 
+            !tx.getReceiverAccount().getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Bu dekontu görme yetkiniz yok!");
+        }
+        
+        model.addAttribute("tx", tx);
+        model.addAttribute("user", user);
+        return "history_receipt";
     }
 }

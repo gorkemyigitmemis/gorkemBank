@@ -99,8 +99,42 @@ public class TransactionService {
         transaction.setDescription(description);
         transaction.setTransactionType("HAVALE");
         transaction.setStatus("BASARILI");
-
+        transaction.setCategory(determineCategory(description)); // V5: Kategori atama
+        
         return transactionRepository.save(transaction);
+    }
+
+    /**
+     * Açıklamaya göre kategori tahmini yapar (V5)
+     */
+    private String determineCategory(String description) {
+        if (description == null) return "Diğer";
+        String desc = description.toLowerCase();
+        
+        if (desc.contains("kira") || desc.contains("aidat")) return "Kira & Barınma";
+        if (desc.contains("market") || desc.contains("yemek") || desc.contains("mutfak")) return "Mutfak & Gıda";
+        if (desc.contains("fatura") || desc.contains("elektrik") || desc.contains("su") || desc.contains("internet")) return "Faturalar";
+        if (desc.contains("hediye") || desc.contains("doğum günü")) return "Eğlence & Hediye";
+        if (desc.contains("borç") || desc.contains("ödeme")) return "Ödemeler";
+        if (desc.contains("maaş")) return "Maaş";
+        
+        return "Diğer";
+    }
+
+    /**
+     * Kullanıcının harcama dağılımını getirir (Pie Chart için) (V5)
+     */
+    public Map<String, BigDecimal> getSpendingInsights(Long userId) {
+        // Kullanıcının gönderdiği (harcama) işlemlerini getir
+        List<Transaction> expenses = transactionRepository.findBySenderUserId(userId);
+        
+        Map<String, BigDecimal> insights = new HashMap<>();
+        for (Transaction t : expenses) {
+            String cat = t.getCategory();
+            BigDecimal current = insights.getOrDefault(cat, BigDecimal.ZERO);
+            insights.put(cat, current.add(t.getAmount()));
+        }
+        return insights;
     }
 
     /**

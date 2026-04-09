@@ -190,6 +190,67 @@
 
         </div>
 
+        <!-- Harcama Analizi & Dekontlar (V5) -->
+        <div class="section-title">
+            <h2>Harcama Analizi</h2>
+        </div>
+        <div class="analysis-grid" style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem; margin-bottom: 2rem;">
+            <!-- Pie Chart -->
+            <div class="card" style="background: var(--surface); padding: 1.5rem; border-radius: var(--radius); border: 1px solid var(--border);">
+                <h3 style="margin-bottom: 1rem; font-size: 1rem;">Kategori Dağılımı</h3>
+                <canvas id="spendingChart" style="max-height: 250px;"></canvas>
+            </div>
+            
+            <!-- Category Legend / List -->
+            <div class="card" style="background: var(--surface); padding: 1.5rem; border-radius: var(--radius); border: 1px solid var(--border); overflow-y: auto; max-height: 250px;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="text-align: left; font-size: 0.8rem; color: var(--text-muted); border-bottom: 1px solid var(--border);">
+                            <th style="padding-bottom: 0.5rem;">Kategori</th>
+                            <th style="padding-bottom: 0.5rem; text-align: right;">Toplam Harcama</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="entry : ${spendingInsights}" style="border-bottom: 1px solid var(--border);">
+                            <td style="padding: 0.75rem 0;" th:text="${entry.key}">Kategori</td>
+                            <td style="padding: 0.75rem 0; text-align: right; font-weight: 600;" th:text="${#numbers.formatDecimal(entry.value, 1, 'COMMA', 2, 'POINT')} + ' ₺'">0.00 ₺</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Script for Chart.js -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            const spendingData = /*[[${spendingInsights}]]*/ {};
+            
+            const ctx = document.getElementById('spendingChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(spendingData),
+                    datasets: [{
+                        data: Object.values(spendingData),
+                        backgroundColor: [
+                            '#c9a84c', '#10b981', '#ef4444', '#3b82f6', '#8b5cf6', '#f59e0b'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    cutout: '70%'
+                }
+            });
+            /*]]>*/
+        </script>
+
         <!-- Son İşlemler -->
         <div class="section-title" th:if="${recentTransactions != null and !recentTransactions.isEmpty()}">
             <h2>Son İşlemler</h2>
@@ -213,6 +274,10 @@
                     <span th:text="${tx.senderAccount.user.id == user.id} ? '-' : '+'"></span>
                     <span>₺</span>
                     <span th:text="${#numbers.formatDecimal(tx.amount, 1, 'COMMA', 2, 'POINT')}">0,00</span>
+                </div>
+                <!-- V5: Dekont Linki -->
+                <div style="margin-left: 10px;">
+                    <a th:href="@{'/dekont/' + ${tx.referenceNo}}" title="Dekont Görüntüle" style="font-size: 1.2rem; filter: grayscale(1); opacity: 0.5;">📄</a>
                 </div>
             </div>
         </div>
