@@ -45,6 +45,7 @@ public class TransactionController {
         User user = userService.findByEmail(email);
         List<Account> accounts = accountService.getActiveAccountsByUserId(user.getId());
 
+        model.addAttribute("user", user);
         model.addAttribute("accounts", accounts);
         return "transfer";
     }
@@ -107,6 +108,7 @@ public class TransactionController {
             model.addAttribute("currentAccount", accounts.get(0));
         }
 
+        model.addAttribute("user", user);
         model.addAttribute("accounts", accounts);
         return "history";
     }
