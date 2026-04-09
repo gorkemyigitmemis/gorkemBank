@@ -46,4 +46,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // Günlük yeni kayıt olan kullanıcı sayısı (Analytics)
     @org.springframework.data.jpa.repository.Query("SELECT CAST(u.createdAt AS DATE), COUNT(u) FROM User u GROUP BY CAST(u.createdAt AS DATE) ORDER BY CAST(u.createdAt AS DATE)")
     java.util.List<Object[]> countByDay();
+
+    // İsim veya soyisim ile filtreleme
+    java.util.List<User> findByAdContainingIgnoreCaseOrSoyadContainingIgnoreCase(String ad, String soyad);
 }

@@ -38,7 +38,7 @@
 
         <!-- Bakiye Kartı -->
         <div class="balance-card">
-            <div class="balance-label">Toplam Bakiye</div>
+            <div class="balance-label">Toplam TRY Bakiye</div>
             <div class="balance-amount">
                 <span class="currency">₺</span>
                 <span class="amount" th:text="${#numbers.formatDecimal(totalBalance, 1, 'COMMA', 2, 'POINT')}">0,00</span>
@@ -46,6 +46,21 @@
             <div class="balance-actions">
                 <a th:href="@{/transfer}" class="btn btn-gold">💸 Para Transferi</a>
                 <a th:href="@{/gecmis}" class="btn btn-outline-light">📋 İşlem Geçmişi</a>
+            </div>
+
+            <!-- Portföy Rozetleri -->
+            <div th:if="${portfolios != null and !portfolios.isEmpty()}" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                <div class="balance-label" style="margin-bottom: 0.5rem; font-size: 0.85rem;">PORTFÖYÜM</div>
+                <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                    <div th:each="portfolio : ${portfolios}" 
+                         style="background: rgba(255,255,255,0.1); padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.9rem; display: flex; align-items: center; gap: 5px;">
+                        <span th:if="${portfolio.currency == 'USD'}">🇺🇸</span>
+                        <span th:if="${portfolio.currency == 'EUR'}">🇪🇺</span>
+                        <span th:if="${portfolio.currency == 'GBP'}">🇬🇧</span>
+                        <span th:if="${portfolio.currency == 'XAU'}">🥇</span>
+                        <span th:text="${#numbers.formatDecimal(portfolio.amount, 1, 'COMMA', 2, 'POINT')} + ' ' + ${portfolio.currency}" style="font-weight: 500; color: white;">0.00 USD</span>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -58,16 +73,16 @@
                 <div class="account-type" th:text="${account.accountType}">VADESIZ</div>
                 <div class="account-balance">
                     <span class="currency-sm">₺</span>
-                    <span th:text="${#numbers.formatDecimal(account.balance, 1, 'COMMA', 2, 'POINT')}">0,00</span>
+                    <span class="amount-sm" th:text="${#numbers.formatDecimal(account.balance, 1, 'COMMA', 2, 'POINT')}">0,00</span>
                 </div>
                 <div class="account-details">
-                    <div class="account-detail">
-                        <span class="detail-label">Hesap No</span>
-                        <span class="detail-value" th:text="${account.accountNumber}">1234567890123456</span>
+                    <div>
+                        <small>Hesap No</small>
+                        <strong th:text="${account.accountNumber}">0000000000000000</strong>
                     </div>
-                    <div class="account-detail">
-                        <span class="detail-label">IBAN</span>
-                        <span class="detail-value iban-text" th:text="${account.formattedIban}">TR00 0006 1012 3456 7890 1234 56</span>
+                    <div>
+                        <small>IBAN</small>
+                        <strong th:text="${account.getFormattedIban()}">TR00 0000 0000 0000</strong>
                     </div>
                 </div>
             </div>
@@ -86,15 +101,15 @@
                     <span class="exchange-flag">🇺🇸</span>
                     <span class="exchange-currency">USD / TRY</span>
                 </div>
-                <div class="exchange-rate" th:text="${#numbers.formatDecimal(exchangeRates.get('USD'), 1, 'COMMA', 2, 'POINT')}">0,00</div>
+                <div class="exchange-rate" th:text="${#numbers.formatDecimal(exchangeRates.get('USD'), 1, 'COMMA', 4, 'POINT')}">0,0000</div>
                 <div class="exchange-actions">
-                    <form th:action="@{/doviz/al}" method="post">
-                        <input type="hidden" name="currency" value="USD">
-                        <button type="submit" class="btn-exchange btn-buy">Al</button>
-                    </form>
-                    <form th:action="@{/doviz/sat}" method="post">
-                        <input type="hidden" name="currency" value="USD">
-                        <button type="submit" class="btn-exchange btn-sell">Sat</button>
+                    <form th:action="@{/doviz/al}" method="post" style="display:flex; flex-direction:column; gap:5px;">
+                        <input type="number" name="amount" min="1" step="0.01" placeholder="Miktar" required style="padding: 5px; border-radius: 4px; border: 1px solid #ccc; font-size:12px; width:100%; box-sizing: border-box;">
+                        <div style="display: flex; gap: 5px">
+                            <input type="hidden" name="currency" value="USD">
+                            <button type="submit" class="btn-exchange btn-buy">Al</button>
+                            <button type="submit" formaction="/doviz/sat" class="btn-exchange btn-sell">Sat</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -105,15 +120,15 @@
                     <span class="exchange-flag">🇪🇺</span>
                     <span class="exchange-currency">EUR / TRY</span>
                 </div>
-                <div class="exchange-rate" th:text="${#numbers.formatDecimal(exchangeRates.get('EUR'), 1, 'COMMA', 2, 'POINT')}">0,00</div>
+                <div class="exchange-rate" th:text="${#numbers.formatDecimal(exchangeRates.get('EUR'), 1, 'COMMA', 4, 'POINT')}">0,0000</div>
                 <div class="exchange-actions">
-                    <form th:action="@{/doviz/al}" method="post">
-                        <input type="hidden" name="currency" value="EUR">
-                        <button type="submit" class="btn-exchange btn-buy">Al</button>
-                    </form>
-                    <form th:action="@{/doviz/sat}" method="post">
-                        <input type="hidden" name="currency" value="EUR">
-                        <button type="submit" class="btn-exchange btn-sell">Sat</button>
+                    <form th:action="@{/doviz/al}" method="post" style="display:flex; flex-direction:column; gap:5px;">
+                        <input type="number" name="amount" min="1" step="0.01" placeholder="Miktar" required style="padding: 5px; border-radius: 4px; border: 1px solid #ccc; font-size:12px; width:100%; box-sizing: border-box;">
+                        <div style="display: flex; gap: 5px">
+                            <input type="hidden" name="currency" value="EUR">
+                            <button type="submit" class="btn-exchange btn-buy">Al</button>
+                            <button type="submit" formaction="/doviz/sat" class="btn-exchange btn-sell">Sat</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -124,15 +139,15 @@
                     <span class="exchange-flag">🇬🇧</span>
                     <span class="exchange-currency">GBP / TRY</span>
                 </div>
-                <div class="exchange-rate" th:text="${#numbers.formatDecimal(exchangeRates.get('GBP'), 1, 'COMMA', 2, 'POINT')}">0,00</div>
+                <div class="exchange-rate" th:text="${#numbers.formatDecimal(exchangeRates.get('GBP'), 1, 'COMMA', 4, 'POINT')}">0,0000</div>
                 <div class="exchange-actions">
-                    <form th:action="@{/doviz/al}" method="post">
-                        <input type="hidden" name="currency" value="GBP">
-                        <button type="submit" class="btn-exchange btn-buy">Al</button>
-                    </form>
-                    <form th:action="@{/doviz/sat}" method="post">
-                        <input type="hidden" name="currency" value="GBP">
-                        <button type="submit" class="btn-exchange btn-sell">Sat</button>
+                    <form th:action="@{/doviz/al}" method="post" style="display:flex; flex-direction:column; gap:5px;">
+                        <input type="number" name="amount" min="1" step="0.01" placeholder="Miktar" required style="padding: 5px; border-radius: 4px; border: 1px solid #ccc; font-size:12px; width:100%; box-sizing: border-box;">
+                        <div style="display: flex; gap: 5px">
+                            <input type="hidden" name="currency" value="GBP">
+                            <button type="submit" class="btn-exchange btn-buy">Al</button>
+                            <button type="submit" formaction="/doviz/sat" class="btn-exchange btn-sell">Sat</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -141,17 +156,17 @@
             <div class="exchange-card">
                 <div class="exchange-header">
                     <span class="exchange-flag">🥇</span>
-                    <span class="exchange-currency">Altın (Gram)</span>
+                    <span class="exchange-currency">Altın (Gr)</span>
                 </div>
                 <div class="exchange-rate" th:text="${#numbers.formatDecimal(exchangeRates.get('XAU'), 1, 'COMMA', 2, 'POINT')}">0,00</div>
                 <div class="exchange-actions">
-                    <form th:action="@{/doviz/al}" method="post">
-                        <input type="hidden" name="currency" value="XAU">
-                        <button type="submit" class="btn-exchange btn-buy">Al</button>
-                    </form>
-                    <form th:action="@{/doviz/sat}" method="post">
-                        <input type="hidden" name="currency" value="XAU">
-                        <button type="submit" class="btn-exchange btn-sell">Sat</button>
+                    <form th:action="@{/doviz/al}" method="post" style="display:flex; flex-direction:column; gap:5px;">
+                        <input type="number" name="amount" min="0.01" step="0.01" placeholder="Miktar" required style="padding: 5px; border-radius: 4px; border: 1px solid #ccc; font-size:12px; width:100%; box-sizing: border-box;">
+                        <div style="display: flex; gap: 5px">
+                            <input type="hidden" name="currency" value="XAU">
+                            <button type="submit" class="btn-exchange btn-buy">Al</button>
+                            <button type="submit" formaction="/doviz/sat" class="btn-exchange btn-sell">Sat</button>
+                        </div>
                     </form>
                 </div>
             </div>

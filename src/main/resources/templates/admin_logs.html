@@ -33,16 +33,37 @@
 
         <!-- Arama Çubuğu -->
         <div class="search-bar-container">
-            <form th:action="@{/loglar}" method="get" class="search-form">
-                <div class="search-input-wrap">
-                    <span class="search-icon">🔍</span>
-                    <input type="text" name="q" th:value="${searchQuery}" 
-                           placeholder="Gönderici veya alıcı ismi ile ara..." 
-                           class="search-input" autocomplete="off">
+            <div class="logs-header">
+                <form th:action="@{/loglar}" method="get" class="search-form">
+                    <input type="text" name="q" class="search-input" th:value="${searchQuery}" placeholder="Kişi Ara (Örn: Seda Yıldız)...">
+                    <button type="submit" class="btn btn-gold">Arama Yap</button>
+                    <a th:if="${searchQuery != null}" th:href="@{/loglar}" class="btn btn-outline" style="border:none; padding-left:0;">Temizle</a>
+                </form>
+            </div>
+
+            <!-- Kişi Arama Sonucu Profili -->
+            <div th:if="${searchedUser != null}" class="user-profile-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 2rem; display: flex; flex-wrap: wrap; gap: 2rem; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div style="width: 60px; height: 60px; background: var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--primary); font-weight: bold;">
+                        <span th:text="${#strings.substring(searchedUser.ad, 0, 1) + #strings.substring(searchedUser.soyad, 0, 1)}">AB</span>
+                    </div>
+                    <div>
+                        <h2 style="margin: 0; font-size: 1.25rem; color: var(--text);" th:text="${searchedUser.ad + ' ' + searchedUser.soyad}">Ad Soyad</h2>
+                        <span style="color: var(--text-muted); font-size: 0.9rem;" th:text="${'TC: ' + searchedUser.tcKimlik}">TC No</span>
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-primary btn-sm">Ara</button>
-                <a th:href="@{/loglar}" class="btn btn-outline btn-sm" th:if="${searchQuery != null and searchQuery != ''}">Temizle</a>
-            </form>
+
+                <div style="flex: 1; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    <div style="background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 8px;">
+                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.25rem;">Toplam Bakiye (TRY)</div>
+                        <div style="font-size: 1.25rem; color: var(--gold); font-weight: bold;" th:text="${#numbers.formatDecimal(searchedUser.accounts.get(0).balance, 1, 'COMMA', 2, 'POINT')} + ' ₺'">0.00 ₺</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 8px;">
+                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.25rem;">Ana IBAN Numarası</div>
+                        <div style="font-size: 0.9rem; color: var(--text); font-family: monospace; letter-spacing: 1px;" th:text="${searchedUser.accounts.get(0).getFormattedIban()}">TR00...</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- İşlem Tablosu -->

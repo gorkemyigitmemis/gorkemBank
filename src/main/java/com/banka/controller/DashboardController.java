@@ -1,10 +1,12 @@
 package com.banka.controller;
 
 import com.banka.model.Account;
+import com.banka.model.Portfolio;
 import com.banka.model.Transaction;
 import com.banka.model.User;
 import com.banka.service.AccountService;
 import com.banka.service.ExchangeRateService;
+import com.banka.service.PortfolioService;
 import com.banka.service.TransactionService;
 import com.banka.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,11 +40,11 @@ public class DashboardController {
     @Autowired
     private ExchangeRateService exchangeRateService;
 
+    @Autowired
+    private PortfolioService portfolioService;
+
     /**
      * ANA PANEL
-     * 
-     * Authentication: Spring Security giriş yapan kullanıcının bilgisini
-     * otomatik olarak bu parametreye enjekte eder.
      */
     @GetMapping("/panel")
     public String dashboard(Authentication authentication, Model model) {
@@ -58,6 +60,9 @@ public class DashboardController {
                 .map(Account::getBalance)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
+        // Kullanıcının portföyünü getir
+        List<Portfolio> portfolios = portfolioService.getUserPortfolios(user.getId());
+
         // İlk hesabın son 5 işlemini getir (varsa)
         List<Transaction> recentTransactions = null;
         if (!accounts.isEmpty()) {
@@ -72,6 +77,7 @@ public class DashboardController {
         model.addAttribute("user", user);
         model.addAttribute("accounts", accounts);
         model.addAttribute("totalBalance", totalBalance);
+        model.addAttribute("portfolios", portfolios);
         model.addAttribute("recentTransactions", recentTransactions);
         model.addAttribute("exchangeRates", rates);
 

@@ -25,6 +25,9 @@ public class AdminLogController {
     @Autowired
     private TransactionService transactionService;
 
+    @Autowired
+    private com.banka.repository.UserRepository userRepository;
+
     /**
      * İŞLEM LOGLARI SAYFASI
      * Tüm bankacılık işlemlerini sayfalı ve detaylı şekilde listeler.
@@ -38,10 +41,12 @@ public class AdminLogController {
 
         List<Transaction> allTransactions;
         long totalCount;
+        com.banka.model.User searchedUser = null;
 
         if (q != null && !q.trim().isEmpty()) {
-            // İsim araması: gönderici veya alıcı adı/soyadı ile filtrele
             String searchLower = q.trim().toLowerCase();
+            
+            // 1. İşlem tablosu araması
             List<Transaction> filtered = transactionService.getAllTransactions().stream()
                     .filter(tx -> {
                         String senderName = (tx.getSenderAccount().getUser().getAd() + " " +
@@ -56,6 +61,12 @@ public class AdminLogController {
             int start = Math.min(page * size, filtered.size());
             int end = Math.min(start + size, filtered.size());
             allTransactions = filtered.subList(start, end);
+
+            // 2. Özel Kullanıcı Araması (Profil Göstermek İçin)
+            List<com.banka.model.User> matchingUsers = userRepository.findByAdContainingIgnoreCaseOrSoyadContainingIgnoreCase(searchLower, searchLower);
+            if (!matchingUsers.isEmpty()) {
+                searchedUser = matchingUsers.get(0); // İlk eşleşeni göster
+            }
         } else {
             allTransactions = transactionService.getAllTransactionsPaginated(page, size);
             totalCount = transactionService.getTransactionCount();
@@ -69,6 +80,7 @@ public class AdminLogController {
         model.addAttribute("totalTransactions", totalCount);
         model.addAttribute("pageSize", size);
         model.addAttribute("searchQuery", q);
+        model.addAttribute("searchedUser", searchedUser);
 
         return "admin_logs";
     }
