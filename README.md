@@ -25,11 +25,16 @@ Gerçek dünya senaryolarını test etmek amacıyla tasarlanmıştır. İçerisi
   - Vadesiz ve Vadeli hesap yönetimi
   - Hesaplar arası anlık para transferi (Havale/EFT) ve bakiye doğrulama.
   - Bütün finansal işlemlerin ACID uyumlu kaydedilmesi.
+- **💱 Gerçek Zamanlı Kur Makası & Portföy:** 
+  - Frankfurter API üzerinden çekilen canlı kurlarla dinamik "Banka Alış" ve "Banka Satış" makas (spread) algoritması.
+  - Altın, Dolar vb. birimlerde alım-satım işlemleri ve portföyün anlık bozma kuru üzerinden hesaplanan "Net TL Değerlemesi".
+- **🚨 Şüpheli İşlem Radarı (AML - Anti Money Laundering):**
+  - Yönetici panelinde, anormal işlem hacmi yaratan kullanıcıları JPQL "GROUP BY ve HAVING" yapılarıyla milisaniyeler içinde tespit eden anlık Radar Sistemi.
 - **📈 Gerçek Zamanlı Veri Analitiği (Admin Dashboard):**
   - Yönetici panelinde dinamik Chart.js grafikleri (Kullanıcı kayıt trendi, transfer sıklığı, hatalı girişler).
   - Tıklanabilir ve anlık renk/veri filtresi sunan interaktif admin kartları.
-- **🕵️‍♂️ Gelişmiş Aktivite Loglama:** Platforma atılan her bir adım (Sayfa ziyaretleri, tarayıcı-cihaz detayları, IP adresleri) saniyesi saniyesine loglanır.
-- **💅 Mükemmel Responsive Arayüz:** Thymeleaf motoru + özel Vanilya CSS ve JavaScript ile harmanlanmış modern "Glassmorphism" ve "Dark Mode" detayları barındıran benzersiz tasarım.
+- **🕵️‍♂️ Gelişmiş Aktivite Loglama:** Platforma atılan her bir adım saniyesi saniyesine loglanır.
+- **💅 Mükemmel Responsive Arayüz & Dark Mode:** Thymeleaf motoru + özel Vanilya CSS ve JavaScript ile harmanlanmış modern "Glassmorphism" tasarımı. Göz yormayan entegre **Dark Mode (Gece Modu)** geçişleri.
 
 ## 🛠 Kullanılan Teknolojiler
 - **Backend:** Java, Spring Boot, Spring Security, Spring Data JPA
