@@ -51,9 +51,12 @@ public class AdminLogController {
                     .filter(tx -> {
                         String senderName = (tx.getSenderAccount().getUser().getAd() + " " +
                                 tx.getSenderAccount().getUser().getSoyad()).toLowerCase();
+                        String senderEmail = tx.getSenderAccount().getUser().getEmail().toLowerCase();
                         String receiverName = (tx.getReceiverAccount().getUser().getAd() + " " +
                                 tx.getReceiverAccount().getUser().getSoyad()).toLowerCase();
-                        return senderName.contains(searchLower) || receiverName.contains(searchLower);
+                        String receiverEmail = tx.getReceiverAccount().getUser().getEmail().toLowerCase();
+                        return senderName.contains(searchLower) || receiverName.contains(searchLower) ||
+                               senderEmail.contains(searchLower) || receiverEmail.contains(searchLower);
                     })
                     .collect(Collectors.toList());
 
@@ -63,7 +66,7 @@ public class AdminLogController {
             allTransactions = filtered.subList(start, end);
 
             // 2. Özel Kullanıcı Araması (Profil Göstermek İçin)
-            List<com.banka.model.User> matchingUsers = userRepository.findByAdContainingIgnoreCaseOrSoyadContainingIgnoreCase(searchLower, searchLower);
+            List<com.banka.model.User> matchingUsers = userRepository.searchUsersByKeyword(searchLower);
             if (!matchingUsers.isEmpty()) {
                 searchedUser = matchingUsers.get(0); // İlk eşleşeni göster
             }

@@ -47,6 +47,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @org.springframework.data.jpa.repository.Query("SELECT CAST(u.createdAt AS DATE), COUNT(u) FROM User u GROUP BY CAST(u.createdAt AS DATE) ORDER BY CAST(u.createdAt AS DATE)")
     java.util.List<Object[]> countByDay();
 
-    // İsim veya soyisim ile filtreleme
-    java.util.List<User> findByAdContainingIgnoreCaseOrSoyadContainingIgnoreCase(String ad, String soyad);
+    // İsim, soyisim veya e-posta ile filtreleme
+    @org.springframework.data.jpa.repository.Query("SELECT u FROM User u WHERE LOWER(u.ad) LIKE %:query% OR LOWER(u.soyad) LIKE %:query% OR LOWER(u.email) LIKE %:query%")
+    java.util.List<User> searchUsersByKeyword(@org.springframework.data.repository.query.Param("query") String query);
 }

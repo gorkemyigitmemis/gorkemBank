@@ -35,9 +35,9 @@
         <div class="search-bar-container">
             <div class="logs-header">
                 <form th:action="@{/loglar}" method="get" class="search-form">
-                    <input type="text" name="q" class="search-input" th:value="${searchQuery}" placeholder="Kişi Ara (Örn: Seda Yıldız)...">
+                    <input type="text" name="q" class="search-input" th:value="${searchQuery}" placeholder="Kişi Ara (Örn: Seda Yıldız veya E-posta)...">
                     <button type="submit" class="btn btn-gold">Arama Yap</button>
-                    <a th:if="${searchQuery != null}" th:href="@{/loglar}" class="btn btn-outline" style="border:none; padding-left:0;">Temizle</a>
+                    <a th:if="${searchQuery != null}" th:href="@{/loglar}" class="btn btn-outline">Temizle</a>
                 </form>
             </div>
 
