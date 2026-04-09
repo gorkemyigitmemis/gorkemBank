@@ -59,6 +59,9 @@ public class DataSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        // Mevcut işlemleri kategorize et (V5 Geriye Dönük Uyumluluk)
+        updateExistingCategories();
+
         // Eğer zaten veri varsa tekrar oluşturma
         if (userRepository.count() > 0) {
             System.out.println("✅ Veritabanında zaten veri var, seed atlanıyor.");
@@ -234,5 +237,35 @@ public class DataSeeder implements CommandLineRunner {
         account.setAccountType(type);
         account.setBalance(balance);
         return accountRepository.save(account);
+    }
+
+    private String determineCategoryFromSeeder(String description) {
+        if (description == null) return "Diğer";
+        String desc = description.toLowerCase();
+        if (desc.contains("kira") || desc.contains("aidat")) return "Kira & Barınma";
+        if (desc.contains("market") || desc.contains("yemek") || desc.contains("mutfak")) return "Mutfak & Gıda";
+        if (desc.contains("fatura") || desc.contains("elektrik") || desc.contains("su") || desc.contains("internet")) return "Faturalar";
+        if (desc.contains("hediye") || desc.contains("doğum günü")) return "Eğlence & Hediye";
+        if (desc.contains("borç") || desc.contains("ödeme")) return "Ödemeler";
+        if (desc.contains("maaş")) return "Maaş";
+        return "Diğer";
+    }
+
+    private void updateExistingCategories() {
+        List<Transaction> allTxs = transactionRepository.findAll();
+        boolean changed = false;
+        for (Transaction tx : allTxs) {
+            if (tx.getCategory() == null || tx.getCategory().equals("Genel") || tx.getCategory().equals("Diğer")) {
+                String newCat = determineCategoryFromSeeder(tx.getDescription());
+                if (!newCat.equals(tx.getCategory())) {
+                    tx.setCategory(newCat);
+                    transactionRepository.save(tx);
+                    changed = true;
+                }
+            }
+        }
+        if (changed) {
+            System.out.println("🔄 Mevcut işlemler geriye dönük olarak kategorize edildi!");
+        }
     }
 }

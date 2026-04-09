@@ -30,9 +30,12 @@ Gerçek dünya senaryolarını test etmek amacıyla tasarlanmıştır. İçerisi
   - Altın, Dolar vb. birimlerde alım-satım işlemleri ve portföyün anlık bozma kuru üzerinden hesaplanan "Net TL Değerlemesi".
 - **🚨 Şüpheli İşlem Radarı (AML - Anti Money Laundering):**
   - Yönetici panelinde, anormal işlem hacmi yaratan kullanıcıları JPQL "GROUP BY ve HAVING" yapılarıyla milisaniyeler içinde tespit eden anlık Radar Sistemi.
-- **📈 Gerçek Zamanlı Veri Analitiği (Admin Dashboard):**
-  - Yönetici panelinde dinamik Chart.js grafikleri (Kullanıcı kayıt trendi, transfer sıklığı, hatalı girişler).
-  - Tıklanabilir ve anlık renk/veri filtresi sunan interaktif admin kartları.
+- **📈 Harcama Analizi & Finansal Sağlık (V5):**
+  - İşlem açıklamalarından otomatik kategori tespiti (Kira, Market, Fatura, Maaş vb.).
+  - Dashboard'da harcama dağılımını gösteren interaktif Donut Grafik (Chart.js).
+- **📄 Profesyonel Dijital Dekont Sistemi (V5):**
+  - Tüm işlemler için antetli kağıt formatında, resmi mühürlü ve yazdırılabilir dijital dekontlar.
+  - Güvenli erişim kontrolü sayesinde sadece işlem tarafları dekontlara erişebilir.
 - **🕵️‍♂️ Gelişmiş Aktivite Loglama:** Platforma atılan her bir adım saniyesi saniyesine loglanır.
 - **💅 Mükemmel Responsive Arayüz & Dark Mode:** Thymeleaf motoru + özel Vanilya CSS ve JavaScript ile harmanlanmış modern "Glassmorphism" tasarımı. Göz yormayan entegre **Dark Mode (Gece Modu)** geçişleri.
 

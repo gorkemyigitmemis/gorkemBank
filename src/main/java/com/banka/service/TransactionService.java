@@ -131,6 +131,8 @@ public class TransactionService {
         Map<String, BigDecimal> insights = new HashMap<>();
         for (Transaction t : expenses) {
             String cat = t.getCategory();
+            if (cat == null) cat = "Genel"; // V5: Null koruması
+            
             BigDecimal current = insights.getOrDefault(cat, BigDecimal.ZERO);
             insights.put(cat, current.add(t.getAmount()));
         }

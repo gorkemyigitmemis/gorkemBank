@@ -38,7 +38,7 @@ public class PdfController {
      * Verilen referans numarasına ait işlemin PDF dekontunu indirir.
      * Güvenlik: Kullanıcı sadece kendi (gönderdiği veya aldığı) işleminin dekontunu görebilir.
      */
-    @GetMapping("/dekont/{referenceNo}")
+    @GetMapping("/dekont/indir/{referenceNo}")
     public ResponseEntity<byte[]> downloadReceipt(@PathVariable String referenceNo, Authentication authentication) {
         try {
             // Referans no ile işlemi bul
