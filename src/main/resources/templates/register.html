@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kayıt Ol - GörkemBank</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script th:src="@{/js/theme.js}"></script>
 </head>
 <body class="auth-body">
+    <div style="position: absolute; top: 20px; right: 20px; z-index: 1000;">
+        <button type="button" class="theme-toggle" onclick="toggleTheme()" style="background: rgba(255,255,255,0.2); backdrop-filter: blur(5px);">🌙</button>
+    </div>
     <div class="auth-container">
         <div class="auth-form-side">
             <div class="auth-form-wrapper">
