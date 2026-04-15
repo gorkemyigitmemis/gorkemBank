@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borsa - GörkemBank</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script th:src="@{/js/theme.js}"></script>
+    <style>
+        .borsa-tabs { display:flex; gap:4px; margin-bottom:1.5rem; background:var(--surface); padding:4px; border-radius:var(--radius); border:1px solid var(--border); }
+        .borsa-tab { flex:1; padding:0.6rem 1rem; text-align:center; border-radius:8px; cursor:pointer; font-weight:600; font-size:0.9rem; transition:var(--transition); color:var(--text-muted); background:transparent; border:none; font-family:inherit; }
+        .borsa-tab.active { background:var(--primary); color:white; }
+        .borsa-tab:hover:not(.active) { background:var(--surface-alt); color:var(--text); }
+
+        /* Unified Asset Card Design */
+        .asset-card { background:var(--surface); border-radius:var(--radius); border:1px solid var(--border); transition:var(--transition); margin-bottom:0.75rem; overflow:hidden; }
+        .asset-card:hover { box-shadow:var(--shadow); border-color:var(--gold-light); }
+        
+        .asset-main { display:flex; align-items:center; justify-content:space-between; padding:1rem 1.25rem; cursor:pointer; user-select:none; }
+        .asset-left { display:flex; align-items:center; gap:0.75rem; }
+        
+        .asset-icon { width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1.2rem; color:white; letter-spacing:0.5px; }
+        .asset-icon.text-icon { font-size:0.75rem; }
+        
+        .asset-info h4 { font-size:0.95rem; color:var(--text); margin:0; }
+        .asset-info span { font-size:0.75rem; color:var(--text-muted); }
+        
+        .asset-right { text-align:right; }
+        .asset-price { font-family:'Outfit',sans-serif; font-weight:700; font-size:1.2rem; color:var(--text); }
+        .asset-change { font-size:0.8rem; font-weight:600; }
+        .asset-up { color:#059669; }
+        .asset-down { color:#dc2626; }
+
+        /* Exchange Rates specific details */
+        .asset-rates-inline { font-size:0.75rem; color:var(--text-muted); margin-top:3px; }
+        .asset-rates-inline strong { color:var(--text); }
+
+        /* Expandable Action Panel */
+        .asset-actions { display:none; background:var(--surface-alt); padding:1rem 1.25rem; border-top:1px solid var(--border); }
+        .asset-card.expanded .asset-actions { display:block; animation:slideDown 0.3s ease; }
+        
+        @keyframes slideDown { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
+
+        .action-form { display:flex; align-items:center; gap:1rem; }
+        .action-input-group { flex:1; position:relative; }
+        .action-input { width:100%; padding:0.6rem 1rem; border:1px solid var(--border); border-radius:8px; font-size:0.9rem; background:var(--surface); color:var(--text); transition:var(--transition); }
+        .action-input:focus { border-color:var(--primary); outline:none; }
+        
+        .action-buttons { display:flex; gap:0.5rem; }
+        .btn-trade { padding:0.6rem 1.5rem; border-radius:8px; font-weight:700; cursor:pointer; border:none; transition:var(--transition); font-family:inherit; color:white; }
+        .btn-buy { background:#10b981; }
+        .btn-buy:hover { background:#059669; }
+        .btn-sell { background:#ef4444; }
+        .btn-sell:hover { background:#dc2626; }
+
+        /* Portföy kartı */
+        .portfolio-section { margin-top:2rem; }
+        .portfolio-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:1rem; }
+        .portfolio-item { background:var(--surface); border-radius:var(--radius); padding:1.25rem; border:1px solid var(--border); position:relative; overflow:hidden; }
+        .portfolio-item::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; background:var(--gold); }
+        .portfolio-currency { font-weight:700; font-size:1.25rem; color:var(--gold); display:flex; justify-content:space-between; }
+        .portfolio-amount { font-family:'Outfit',sans-serif; font-weight:700; font-size:1.3rem; color:var(--text); margin-top:0.5rem; }
+        .portfolio-value { font-size:0.85rem; color:var(--text-muted); margin-top:0.25rem; }
+
+        /* Tab content */
+        .tab-content { display:none; }
+        .tab-content.active { display:block; }
+
+        .stock-colors-0 { background: linear-gradient(135deg, #1a3a5c, #2a5a8c); }
+        .stock-colors-1 { background: linear-gradient(135deg, #1a5c3a, #2a8c5a); }
+        .stock-colors-2 { background: linear-gradient(135deg, #5c1a3a, #8c2a5a); }
+        .stock-colors-3 { background: linear-gradient(135deg, #5c3a1a, #8c5a2a); }
+        .stock-colors-4 { background: linear-gradient(135deg, #3a1a5c, #5a2a8c); }
+        .stock-colors-5 { background: linear-gradient(135deg, #0a4060, #1a6090); }
+        .stock-colors-6 { background: linear-gradient(135deg, #604020, #906030); }
+        .stock-colors-7 { background: linear-gradient(135deg, #204060, #306090); }
+        .stock-colors-8 { background: linear-gradient(135deg, #602040, #903060); }
+        .stock-colors-9 { background: linear-gradient(135deg, #406020, #609030); }
+        
+        .currency-bg { background: linear-gradient(135deg, #1f2937, #374151); }
+        .gold-bg { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .silver-bg { background: linear-gradient(135deg, #64748b, #94a3b8); }
+    </style>
+</head>
+<body class="app-body">
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="logo-icon-sm">🏦</span>
+            <span class="nav-title">GörkemBank</span>
+        </div>
+        <div class="nav-links">
+            <a th:href="@{/panel}" class="nav-link">Panel</a>
+            <a th:href="@{/transfer}" class="nav-link">Transfer</a>
+            <a th:href="@{/kredi}" class="nav-link">Kredi</a>
+            <a th:href="@{/otomatik-odeme}" class="nav-link">Ödeme</a>
+            <a th:href="@{/borsa}" class="nav-link active">Borsa</a>
+            <a th:href="@{/gecmis}" class="nav-link">Geçmiş</a>
+            <a sec:authorize="hasRole('ADMIN')" th:href="@{/analitik}" class="nav-link nav-link-admin">📊 Analitik</a>
+        </div>
+        <div class="nav-user" style="display:flex; align-items:center; gap:10px;">
+            <button type="button" class="theme-toggle" onclick="toggleTheme()">🌙</button>
+            <span class="user-greeting">Merhaba, <strong th:text="${user.ad}">Kullanıcı</strong></span>
+            <form th:action="@{/cikis}" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-outline btn-sm">Çıkış</button>
+            </form>
+        </div>
+    </nav>
+
+    <main class="main-content" style="max-width:1000px;">
+        <div class="page-header">
+            <h1>📈 Borsa & Döviz Piyasası</h1>
+            <p>Canlı piyasaları takip edin. İşlem yapmak için paritelerin üzerine tıklayın.</p>
+        </div>
+
+        <div th:if="${successMessage}" class="alert alert-success">
+            <span>✅</span>
+            <span th:text="${successMessage}"></span>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-error">
+            <span>⚠️</span>
+            <span th:text="${errorMessage}"></span>
+        </div>
+
+        <!-- Tab Menü -->
+        <div class="borsa-tabs">
+            <button class="borsa-tab active" onclick="switchTab('doviz')">💱 Döviz & Emtia</button>
+            <button class="borsa-tab" onclick="switchTab('hisse')">📊 BIST Hisseler</button>
+            <button class="borsa-tab" onclick="switchTab('portfoy')">💼 Portföyüm</button>
+        </div>
+
+        <!-- ==================== DÖVİZ TABı ==================== -->
+        <div class="tab-content active" id="tab-doviz">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                <h2 style="font-size:1.1rem; color:var(--text);">Canlı Kurlar</h2>
+                <span class="badge badge-success" style="font-size:0.7rem; padding:3px 8px;">🟢 Canlı Yürütme</span>
+            </div>
+
+            <div th:if="${buyRates != null and sellRates != null}">
+
+                <!-- USD -->
+                <div class="asset-card" onclick="toggleCard(this)">
+                    <div class="asset-main">
+                        <div class="asset-left">
+                            <div class="asset-icon currency-bg">🇺🇸</div>
+                            <div class="asset-info">
+                                <h4>Amerikan Doları (USD / TRY)</h4>
+                                <div class="asset-rates-inline">Alış: <strong th:text="${#numbers.formatDecimal(sellRates.get('USD'), 1, 'COMMA', 4, 'POINT')}">0</strong> | Satış: <strong th:text="${#numbers.formatDecimal(buyRates.get('USD'), 1, 'COMMA', 4, 'POINT')}">0</strong></div>
+                            </div>
+                        </div>
+                        <div class="asset-right">
+                            <div class="asset-price">₺<span th:text="${#numbers.formatDecimal(buyRates.get('USD'), 1, 'COMMA', 4, 'POINT')}">0</span></div>
+                        </div>
+                    </div>
+                    <div class="asset-actions" onclick="event.stopPropagation()">
+                        <form th:action="@{/doviz/al}" method="post" class="action-form">
+                            <div class="action-input-group">
+                                <input type="number" name="amount" min="1" step="0.01" placeholder="İşlem Miktarı (USD)" required class="action-input">
+                            </div>
+                            <input type="hidden" name="currency" value="USD">
+                            <div class="action-buttons">
+                                <button type="submit" class="btn-trade btn-buy">USD Al</button>
+                                <button type="submit" formaction="/doviz/sat" class="btn-trade btn-sell">USD Sat</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- EUR -->
+                <div class="asset-card" onclick="toggleCard(this)">
+                    <div class="asset-main">
+                        <div class="asset-left">
+                            <div class="asset-icon currency-bg">🇪🇺</div>
+                            <div class="asset-info">
+                                <h4>Euro (EUR / TRY)</h4>
+                                <div class="asset-rates-inline">Alış: <strong th:text="${#numbers.formatDecimal(sellRates.get('EUR'), 1, 'COMMA', 4, 'POINT')}">0</strong> | Satış: <strong th:text="${#numbers.formatDecimal(buyRates.get('EUR'), 1, 'COMMA', 4, 'POINT')}">0</strong></div>
+                            </div>
+                        </div>
+                        <div class="asset-right">
+                            <div class="asset-price">₺<span th:text="${#numbers.formatDecimal(buyRates.get('EUR'), 1, 'COMMA', 4, 'POINT')}">0</span></div>
+                        </div>
+                    </div>
+                    <div class="asset-actions" onclick="event.stopPropagation()">
+                        <form th:action="@{/doviz/al}" method="post" class="action-form">
+                            <div class="action-input-group">
+                                <input type="number" name="amount" min="1" step="0.01" placeholder="İşlem Miktarı (EUR)" required class="action-input">
+                            </div>
+                            <input type="hidden" name="currency" value="EUR">
+                            <div class="action-buttons">
+                                <button type="submit" class="btn-trade btn-buy">EUR Al</button>
+                                <button type="submit" formaction="/doviz/sat" class="btn-trade btn-sell">EUR Sat</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- GBP -->
+                <div class="asset-card" onclick="toggleCard(this)">
+                    <div class="asset-main">
+                        <div class="asset-left">
+                            <div class="asset-icon currency-bg">🇬🇧</div>
+                            <div class="asset-info">
+                                <h4>İngiliz Sterlini (GBP / TRY)</h4>
+                                <div class="asset-rates-inline">Alış: <strong th:text="${#numbers.formatDecimal(sellRates.get('GBP'), 1, 'COMMA', 4, 'POINT')}">0</strong> | Satış: <strong th:text="${#numbers.formatDecimal(buyRates.get('GBP'), 1, 'COMMA', 4, 'POINT')}">0</strong></div>
+                            </div>
+                        </div>
+                        <div class="asset-right">
+                            <div class="asset-price">₺<span th:text="${#numbers.formatDecimal(buyRates.get('GBP'), 1, 'COMMA', 4, 'POINT')}">0</span></div>
+                        </div>
+                    </div>
+                    <div class="asset-actions" onclick="event.stopPropagation()">
+                        <form th:action="@{/doviz/al}" method="post" class="action-form">
+                            <div class="action-input-group">
+                                <input type="number" name="amount" min="1" step="0.01" placeholder="İşlem Miktarı (GBP)" required class="action-input">
+                            </div>
+                            <input type="hidden" name="currency" value="GBP">
+                            <div class="action-buttons">
+                                <button type="submit" class="btn-trade btn-buy">GBP Al</button>
+                                <button type="submit" formaction="/doviz/sat" class="btn-trade btn-sell">GBP Sat</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- CHF -->
+                <div class="asset-card" onclick="toggleCard(this)">
+                    <div class="asset-main">
+                        <div class="asset-left">
+                            <div class="asset-icon currency-bg">🇨🇭</div>
+                            <div class="asset-info">
+                                <h4>İsviçre Frangı (CHF / TRY)</h4>
+                                <div class="asset-rates-inline">Alış: <strong th:text="${#numbers.formatDecimal(sellRates.get('CHF'), 1, 'COMMA', 4, 'POINT')}">0</strong> | Satış: <strong th:text="${#numbers.formatDecimal(buyRates.get('CHF'), 1, 'COMMA', 4, 'POINT')}">0</strong></div>
+                            </div>
+                        </div>
+                        <div class="asset-right">
+                            <div class="asset-price">₺<span th:text="${#numbers.formatDecimal(buyRates.get('CHF'), 1, 'COMMA', 4, 'POINT')}">0</span></div>
+                        </div>
+                    </div>
+                    <div class="asset-actions" onclick="event.stopPropagation()">
+                        <form th:action="@{/doviz/al}" method="post" class="action-form">
+                            <div class="action-input-group">
+                                <input type="number" name="amount" min="1" step="0.01" placeholder="İşlem Miktarı (CHF)" required class="action-input">
+                            </div>
+                            <input type="hidden" name="currency" value="CHF">
+                            <div class="action-buttons">
+                                <button type="submit" class="btn-trade btn-buy">CHF Al</button>
+                                <button type="submit" formaction="/doviz/sat" class="btn-trade btn-sell">CHF Sat</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Altın -->
+                <div class="asset-card" style="border-left: 3px solid #f59e0b;" onclick="toggleCard(this)">
+                    <div class="asset-main">
+                        <div class="asset-left">
+                            <div class="asset-icon gold-bg">🥇</div>
+                            <div class="asset-info">
+                                <h4>Gram Altın (Gr)</h4>
+                                <div class="asset-rates-inline">Alış: <strong th:text="${#numbers.formatDecimal(sellRates.get('XAU'), 1, 'COMMA', 2, 'POINT')}">0</strong> | Satış: <strong th:text="${#numbers.formatDecimal(buyRates.get('XAU'), 1, 'COMMA', 2, 'POINT')}">0</strong></div>
+                            </div>
+                        </div>
+                        <div class="asset-right">
+                            <div class="asset-price">₺<span th:text="${#numbers.formatDecimal(buyRates.get('XAU'), 1, 'COMMA', 2, 'POINT')}">0</span></div>
+                        </div>
+                    </div>
+                    <div class="asset-actions" onclick="event.stopPropagation()">
+                        <form th:action="@{/doviz/al}" method="post" class="action-form">
+                            <div class="action-input-group">
+                                <input type="number" name="amount" min="0.01" step="0.01" placeholder="Miktar (Gram)" required class="action-input">
+                            </div>
+                            <input type="hidden" name="currency" value="XAU">
+                            <div class="action-buttons">
+                                <button type="submit" class="btn-trade btn-buy">Altın Al</button>
+                                <button type="submit" formaction="/doviz/sat" class="btn-trade btn-sell">Altın Sat</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Gümüş -->
+                <div class="asset-card" style="border-left: 3px solid #64748b;" onclick="toggleCard(this)">
+                    <div class="asset-main">
+                        <div class="asset-left">
+                            <div class="asset-icon silver-bg">🥈</div>
+                            <div class="asset-info">
+                                <h4>Gram Gümüş (Gr)</h4>
+                                <div class="asset-rates-inline">Alış: <strong th:text="${#numbers.formatDecimal(sellRates.get('XAG'), 1, 'COMMA', 2, 'POINT')}">0</strong> | Satış: <strong th:text="${#numbers.formatDecimal(buyRates.get('XAG'), 1, 'COMMA', 2, 'POINT')}">0</strong></div>
+                            </div>
+                        </div>
+                        <div class="asset-right">
+                            <div class="asset-price">₺<span th:text="${#numbers.formatDecimal(buyRates.get('XAG'), 1, 'COMMA', 2, 'POINT')}">0</span></div>
+                        </div>
+                    </div>
+                    <div class="asset-actions" onclick="event.stopPropagation()">
+                        <form th:action="@{/doviz/al}" method="post" class="action-form">
+                            <div class="action-input-group">
+                                <input type="number" name="amount" min="0.01" step="0.01" placeholder="Miktar (Gram)" required class="action-input">
+                            </div>
+                            <input type="hidden" name="currency" value="XAG">
+                            <div class="action-buttons">
+                                <button type="submit" class="btn-trade btn-buy">Gümüş Al</button>
+                                <button type="submit" formaction="/doviz/sat" class="btn-trade btn-sell">Gümüş Sat</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ==================== HİSSE TABı ==================== -->
+        <div class="tab-content" id="tab-hisse">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                <h2 style="font-size:1.1rem; color:var(--text);">BIST 100 - Popüler Hisseler</h2>
+                <span class="badge badge-warning" style="font-size:0.7rem; padding:3px 8px;">⚠️ Simülasyon</span>
+            </div>
+            
+            <div th:each="stock, iter : ${stocks}" class="asset-card" onclick="toggleCard(this)">
+                <div class="asset-main">
+                    <div class="asset-left">
+                        <div th:class="'asset-icon text-icon stock-colors-' + ${iter.index}" th:text="${stock.key}">THYAO</div>
+                        <div class="asset-info">
+                            <h4 th:text="${stockNames.get(stock.key)}">Türk Hava Yolları</h4>
+                            <span>BIST - <span th:text="${stock.key}"></span></span>
+                        </div>
+                    </div>
+                    <div class="asset-right">
+                        <div class="asset-price">₺<span th:text="${#numbers.formatDecimal(stock.value[0], 1, 'COMMA', 2, 'POINT')}">0</span></div>
+                        <div th:class="${stock.value[1] >= 0 ? 'asset-change asset-up' : 'asset-change asset-down'}">
+                            <span th:if="${stock.value[1] >= 0}">▲</span><span th:if="${stock.value[1] < 0}">▼</span>
+                            <span th:text="${'%' + #numbers.formatDecimal((stock.value[1] < 0 ? -stock.value[1] : stock.value[1]), 1, 'COMMA', 2, 'POINT')}">0%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="asset-actions" onclick="event.stopPropagation()">
+                    <form th:action="@{/borsa/hisse/al}" method="post" class="action-form">
+                        <div class="action-input-group">
+                            <input type="number" name="amount" min="1" step="1" placeholder="Miktar (Lot)" required class="action-input">
+                        </div>
+                        <input type="hidden" name="ticker" th:value="${stock.key}">
+                        <div class="action-buttons">
+                            <button type="submit" class="btn-trade btn-buy">Al</button>
+                            <button type="submit" formaction="/borsa/hisse/sat" class="btn-trade btn-sell">Sat</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== PORTFÖY TABı ==================== -->
+        <div class="tab-content" id="tab-portfoy">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                <h2 style="font-size:1.1rem; color:var(--text);">💼 Portföyüm</h2>
+                <span style="font-size:0.9rem; color:var(--gold); font-weight:700;"
+                      th:if="${portfolioTotalTry != null and portfolioTotalTry > 0}">
+                    Toplam: ₺<span th:text="${#numbers.formatDecimal(portfolioTotalTry, 1, 'COMMA', 2, 'POINT')}">0</span>
+                </span>
+            </div>
+
+            <div th:if="${portfolios.isEmpty()}" class="empty-state">
+                <p>📭 Portföyünüzde henüz varlık bulunmuyor.<br>Borsa veya Döviz sekmesinden alım yapabilirsiniz.</p>
+            </div>
+
+            <div th:if="${!portfolios.isEmpty()}" class="portfolio-grid">
+                <div th:each="p : ${portfolios}" class="portfolio-item">
+                    <div class="portfolio-currency">
+                        <span th:text="${p.currency}">USD</span>
+                        <span style="font-size: 0.8rem; opacity: 0.5;">
+                            <span th:if="${stocks.containsKey(p.currency)}">LOT</span>
+                            <span th:if="${p.currency == 'XAU' or p.currency == 'XAG'}">GR</span>
+                        </span>
+                    </div>
+                    <div class="portfolio-amount">
+                        <span th:if="${stocks.containsKey(p.currency)}" th:text="${#numbers.formatDecimal(p.amount, 1, 'COMMA', 0, 'POINT')}"></span>
+                        <span th:if="${!stocks.containsKey(p.currency)}" th:text="${#numbers.formatDecimal(p.amount, 1, 'COMMA', 4, 'POINT')}"></span>
+                    </div>
+                    <div class="portfolio-value">
+                        <!-- Hisse Senedi Değeri -->
+                        <span th:if="${stocks.containsKey(p.currency)}">
+                            ≈ ₺<span th:text="${#numbers.formatDecimal(p.amount.doubleValue() * stocks.get(p.currency)[0], 1, 'COMMA', 2, 'POINT')}">0</span>
+                        </span>
+                        <!-- Döviz / Emtia Değeri -->
+                        <span th:if="${sellRates.get(p.currency) != null}">
+                            ≈ ₺<span th:text="${#numbers.formatDecimal(p.amount.doubleValue() * sellRates.get(p.currency), 1, 'COMMA', 2, 'POINT')}">0</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.borsa-tab').forEach(el => el.classList.remove('active'));
+            document.getElementById('tab-' + tab).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function toggleCard(cardElement) {
+            // İsteğe bağlı: diğer açık kartları kapatmak için aşağıdaki satırı açabilirsiniz
+            // document.querySelectorAll('.asset-card.expanded').forEach(c => { if(c !== cardElement) c.classList.remove('expanded'); });
+            cardElement.classList.toggle('expanded');
+        }
+    </script>
+</body>
+</html>

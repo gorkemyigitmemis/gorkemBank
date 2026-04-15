@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kredi - GörkemBank</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script th:src="@{/js/theme.js}"></script>
+</head>
+<body class="app-body">
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="logo-icon-sm">🏦</span>
+            <span class="nav-title">GörkemBank</span>
+        </div>
+        <div class="nav-links">
+            <a th:href="@{/panel}" class="nav-link">Panel</a>
+            <a th:href="@{/transfer}" class="nav-link">Transfer</a>
+            <a th:href="@{/kredi}" class="nav-link active">Kredi</a>
+            <a th:href="@{/otomatik-odeme}" class="nav-link">Ödeme</a>
+            <a th:href="@{/borsa}" class="nav-link">Borsa</a>
+            <a th:href="@{/gecmis}" class="nav-link">Geçmiş</a>
+            <a sec:authorize="hasRole('ADMIN')" th:href="@{/analitik}" class="nav-link nav-link-admin">📊 Analitik</a>
+        </div>
+        <div class="nav-user" style="display:flex; align-items:center; gap:10px;">
+            <button type="button" class="theme-toggle" onclick="toggleTheme()">🌙</button>
+            <span class="user-greeting">Merhaba, <strong th:text="${user.ad}">Kullanıcı</strong></span>
+            <form th:action="@{/cikis}" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-outline btn-sm">Çıkış</button>
+            </form>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h1>💳 Kredi İşlemleri</h1>
+            <p>Uygun faiz oranlarıyla kredi çekin, taksitlerinizi yönetin.</p>
+        </div>
+
+        <div th:if="${successMessage}" class="alert alert-success">
+            <span>✅</span>
+            <span th:text="${successMessage}"></span>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-error">
+            <span>⚠️</span>
+            <span th:text="${errorMessage}"></span>
+        </div>
+
+        <!-- Kredi Oranları Tablosu -->
+        <div class="section-title"><h2>📊 Güncel Kredi Oranları</h2></div>
+        <div class="table-card" style="margin-bottom:2rem;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Kredi Türü</th>
+                        <th>Aylık Faiz</th>
+                        <th>Vade Seçenekleri</th>
+                        <th>Min Tutar</th>
+                        <th>Max Tutar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="badge" style="background:rgba(59,130,246,0.12);color:#2563eb;">🏠 İhtiyaç Kredisi</span></td>
+                        <td style="font-weight:700; color: var(--gold);">%3.29</td>
+                        <td>12, 24, 36, 48 Ay</td>
+                        <td>₺1.000</td>
+                        <td>₺500.000</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge" style="background:rgba(16,185,129,0.12);color:#059669;">🏡 Konut Kredisi</span></td>
+                        <td style="font-weight:700; color: var(--gold);">%2.59</td>
+                        <td>60, 120, 180, 240 Ay</td>
+                        <td>₺100.000</td>
+                        <td>₺5.000.000</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge" style="background:rgba(245,158,11,0.12);color:#d97706;">🚗 Taşıt Kredisi</span></td>
+                        <td style="font-weight:700; color: var(--gold);">%2.89</td>
+                        <td>12, 24, 36, 48 Ay</td>
+                        <td>₺50.000</td>
+                        <td>₺2.000.000</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Kredi Başvuru Formu + Hesaplayıcı -->
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem; margin-bottom:2rem;">
+            <!-- Sol: Başvuru Formu -->
+            <div class="form-card" style="max-width:100%;">
+                <h3 style="margin-bottom:1rem; color: var(--text);">📝 Kredi Başvurusu</h3>
+                <form th:action="@{/kredi/basvur}" method="post" class="transfer-form">
+                    <div class="form-group">
+                        <label for="loanType">Kredi Türü</label>
+                        <select id="loanType" name="loanType" required onchange="updateTermOptions(); calculatePreview();">
+                            <option value="">Seçiniz...</option>
+                            <option value="IHTIYAC">🏠 İhtiyaç Kredisi (%3.29)</option>
+                            <option value="KONUT">🏡 Konut Kredisi (%2.59)</option>
+                            <option value="TASIT">🚗 Taşıt Kredisi (%2.89)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="amount">Kredi Tutarı (₺)</label>
+                        <input type="number" id="amount" name="amount" placeholder="0.00" step="100" min="1000" required oninput="calculatePreview()">
+                    </div>
+                    <div class="form-group">
+                        <label for="termMonths">Vade (Ay)</label>
+                        <select id="termMonths" name="termMonths" required onchange="calculatePreview()">
+                            <option value="">Önce kredi türü seçin...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="accountId">Kredinin Yatırılacağı Hesap</label>
+                        <select id="accountId" name="accountId" required>
+                            <option value="">Hesap seçiniz...</option>
+                            <option th:each="account : ${accounts}"
+                                    th:value="${account.id}"
+                                    th:text="${account.accountType + ' - ' + account.formattedIban + ' (₺' + #numbers.formatDecimal(account.balance, 1, 'COMMA', 2, 'POINT') + ')'}">
+                            </option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full" onclick="return confirm('Kredi başvurusunu onaylıyor musunuz?')">
+                        Kredi Başvurusu Yap
+                    </button>
+                </form>
+            </div>
+
+            <!-- Sağ: Anlık Hesaplayıcı -->
+            <div class="form-card" style="max-width:100%; background: var(--surface); display:flex; flex-direction:column; justify-content:center;">
+                <h3 style="margin-bottom:1.5rem; color: var(--text);">🧮 Anlık Kredi Hesaplayıcı</h3>
+                <div id="calculatorResult" style="text-align:center; padding:1rem;">
+                    <p style="color: var(--text-muted); font-size:0.95rem;">Kredi türü, tutar ve vade seçerek<br>anlık taksit hesaplaması yapabilirsiniz.</p>
+                </div>
+                <div id="calculatorFilled" style="display:none;">
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+                        <div style="text-align:center; padding:1rem; background:var(--surface-alt); border-radius:var(--radius);">
+                            <div style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px;">Aylık Taksit</div>
+                            <div id="calcMonthly" style="font-size:1.75rem; font-weight:700; color:var(--gold); font-family:'Outfit',sans-serif;">₺0</div>
+                        </div>
+                        <div style="text-align:center; padding:1rem; background:var(--surface-alt); border-radius:var(--radius);">
+                            <div style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px;">Toplam Ödeme</div>
+                            <div id="calcTotal" style="font-size:1.75rem; font-weight:700; color:var(--text); font-family:'Outfit',sans-serif;">₺0</div>
+                        </div>
+                    </div>
+                    <div style="text-align:center; padding:0.75rem; background:rgba(239,68,68,0.08); border-radius:var(--radius);">
+                        <span style="font-size:0.85rem; color:var(--text-muted);">Toplam Faiz Tutarı: </span>
+                        <span id="calcInterest" style="font-weight:700; color:var(--error);">₺0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mevcut Kredilerim -->
+        <div class="section-title">
+            <h2>📋 Mevcut Kredilerim</h2>
+            <span th:if="${totalDebt.compareTo(T(java.math.BigDecimal).ZERO) > 0}" 
+                  style="font-size:0.9rem; color:var(--error); font-weight:600;">
+                Toplam Borç: ₺<span th:text="${#numbers.formatDecimal(totalDebt, 1, 'COMMA', 2, 'POINT')}">0</span>
+            </span>
+        </div>
+
+        <div th:if="${loans.isEmpty()}" class="empty-state">
+            <p>📭 Henüz krediniz bulunmuyor.</p>
+        </div>
+
+        <div th:if="${!loans.isEmpty()}" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap:1.25rem; margin-bottom:2rem;">
+            <div th:each="loan : ${loans}" class="account-card" style="position:relative;">
+                <!-- Durum badge -->
+                <span th:if="${loan.status == 'AKTIF'}" class="badge badge-success" style="position:absolute; top:1rem; right:1rem;">Aktif</span>
+                <span th:if="${loan.status == 'TAMAMLANDI'}" class="badge" style="position:absolute; top:1rem; right:1rem; background:rgba(59,130,246,0.12); color:#2563eb;">Tamamlandı</span>
+
+                <!-- Kredi Türü -->
+                <div style="margin-bottom:0.5rem;">
+                    <span class="account-type" th:text="${loan.loanTypeDisplay}">İhtiyaç Kredisi</span>
+                </div>
+
+                <!-- Tutar -->
+                <div class="account-balance">
+                    <span class="currency-sm">₺</span><span th:text="${#numbers.formatDecimal(loan.principalAmount, 1, 'COMMA', 2, 'POINT')}">0</span>
+                </div>
+
+                <!-- İlerleme Çubuğu -->
+                <div style="background:var(--surface-alt); border-radius:10px; height:8px; margin-bottom:1rem; overflow:hidden;">
+                    <div style="height:100%; border-radius:10px; transition: width 0.5s ease;"
+                         th:style="'width:' + ${loan.progressPercent} + '%; background: linear-gradient(90deg, var(--gold), var(--gold-light));'">
+                    </div>
+                </div>
+
+                <!-- Detaylar -->
+                <div class="account-details" style="gap:0.4rem;">
+                    <div class="account-detail">
+                        <span class="detail-label">Aylık Taksit</span>
+                        <span class="detail-value" style="color:var(--gold); font-weight:700;">₺<span th:text="${#numbers.formatDecimal(loan.monthlyPayment, 1, 'COMMA', 2, 'POINT')}">0</span></span>
+                    </div>
+                    <div class="account-detail">
+                        <span class="detail-label">Kalan Borç</span>
+                        <span class="detail-value" th:style="${loan.remainingAmount.compareTo(T(java.math.BigDecimal).ZERO) > 0 ? 'color:var(--error);font-weight:700;' : 'color:var(--success);font-weight:700;'}">
+                            ₺<span th:text="${#numbers.formatDecimal(loan.remainingAmount, 1, 'COMMA', 2, 'POINT')}">0</span>
+                        </span>
+                    </div>
+                    <div class="account-detail">
+                        <span class="detail-label">Faiz (%)</span>
+                        <span class="detail-value" th:text="${loan.interestRate + '/ay'}">%0</span>
+                    </div>
+                    <div class="account-detail">
+                        <span class="detail-label">Taksit Durumu</span>
+                        <span class="detail-value" th:text="${loan.paidMonths + '/' + loan.termMonths + ' ay'}">0/0</span>
+                    </div>
+                    <div class="account-detail" th:if="${loan.nextPaymentDate != null}">
+                        <span class="detail-label">Son Ödeme</span>
+                        <span class="detail-value" th:text="${#temporals.format(loan.nextPaymentDate, 'dd.MM.yyyy')}">01.01.2025</span>
+                    </div>
+                    <div class="account-detail">
+                        <span class="detail-label">Referans</span>
+                        <span class="detail-value iban-text" th:text="${loan.referenceNo}">KRD-XXXX</span>
+                    </div>
+                </div>
+
+                <!-- Ödeme Butonu -->
+                <form th:if="${loan.status == 'AKTIF'}" th:action="@{'/kredi/ode/' + ${loan.id}}" method="post" style="margin-top:1rem;">
+                    <button type="submit" class="btn btn-gold btn-full btn-sm" onclick="return confirm('₺' + this.closest('.account-card').querySelector('.detail-value').textContent.replace('₺','') + ' taksit ödenecek. Onaylıyor musunuz?')">
+                        💰 Taksit Öde
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const termOptionsMap = {
+            'IHTIYAC': [12, 24, 36, 48],
+            'KONUT': [60, 120, 180, 240],
+            'TASIT': [12, 24, 36, 48]
+        };
+        const ratesMap = {
+            'IHTIYAC': 3.29,
+            'KONUT': 2.59,
+            'TASIT': 2.89
+        };
+
+        function updateTermOptions() {
+            const type = document.getElementById('loanType').value;
+            const select = document.getElementById('termMonths');
+            select.innerHTML = '<option value="">Vade seçiniz...</option>';
+            if (termOptionsMap[type]) {
+                termOptionsMap[type].forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m;
+                    opt.textContent = m + ' Ay';
+                    select.appendChild(opt);
+                });
+            }
+        }
+
+        function calculatePreview() {
+            const type = document.getElementById('loanType').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+            const months = parseInt(document.getElementById('termMonths').value);
+
+            if (!type || !amount || !months || amount <= 0) {
+                document.getElementById('calculatorResult').style.display = 'block';
+                document.getElementById('calculatorFilled').style.display = 'none';
+                return;
+            }
+
+            const r = ratesMap[type] / 100;
+            const n = months;
+            const power = Math.pow(1 + r, n);
+            const monthly = amount * (r * power) / (power - 1);
+            const total = monthly * n;
+            const interest = total - amount;
+
+            document.getElementById('calcMonthly').textContent = '₺' + monthly.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            document.getElementById('calcTotal').textContent = '₺' + total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            document.getElementById('calcInterest').textContent = '₺' + interest.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+            document.getElementById('calculatorResult').style.display = 'none';
+            document.getElementById('calculatorFilled').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

@@ -59,19 +59,88 @@
             </div>
         </div>
 
-        <!-- Sağ taraf: Görsel -->
+        <!-- Sağ taraf: Kampanyalar & Görsel -->
         <div class="auth-visual-side">
             <div class="auth-visual-content">
                 <h2>Güvenli Bankacılık</h2>
-                <p>Hesaplarınızı yönetin, para transferi yapın, işlem geçmişinizi görüntüleyin.</p>
-                <div class="visual-features">
-                    <div class="visual-feature">💰 Anlık Bakiye Görüntüleme</div>
-                    <div class="visual-feature">🔄 Hızlı Para Transferi</div>
-                    <div class="visual-feature">📊 İşlem Geçmişi</div>
-                    <div class="visual-feature">🔒 Güvenli Altyapı</div>
+                <p>Hesaplarınızı yönetin, para transferi yapın, kredi çekin.</p>
+
+                <!-- Kampanya Slider -->
+                <div class="campaign-slider">
+                    <div class="campaign-card campaign-active" id="campaign-0">
+                        <div class="campaign-icon">🎉</div>
+                        <div class="campaign-text">
+                            <strong>İlk Otomatik Ödeme Talimatı</strong>
+                            <span>İlk 2 Ay <em style="color:#10b981; font-size:1.1em;">%5</em> Bizden!</span>
+                        </div>
+                    </div>
+                    <div class="campaign-card" id="campaign-1">
+                        <div class="campaign-icon">🅿️</div>
+                        <div class="campaign-text">
+                            <strong>İSPARK Harcamalarınızda</strong>
+                            <span>Her Ödemede <em style="color:#10b981; font-size:1.1em;">%10</em> Bizden!</span>
+                        </div>
+                    </div>
+                    <div class="campaign-card" id="campaign-2">
+                        <div class="campaign-icon">💳</div>
+                        <div class="campaign-text">
+                            <strong>İhtiyaç Kredisinde</strong>
+                            <span>İlk 3 Ay <em style="color:#10b981; font-size:1.1em;">Ertelemeli!</em></span>
+                        </div>
+                    </div>
+                    <div class="campaign-card" id="campaign-3">
+                        <div class="campaign-icon">🎁</div>
+                        <div class="campaign-text">
+                            <strong>Arkadaşını Getir</strong>
+                            <span>Anında <em style="color:#10b981; font-size:1.1em;">₺100</em> Kazan!</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kayan Noktalar -->
+                <div style="display:flex; gap:8px; justify-content:center; margin-top:1rem;">
+                    <div class="campaign-dot campaign-dot-active" id="dot-0"></div>
+                    <div class="campaign-dot" id="dot-1"></div>
+                    <div class="campaign-dot" id="dot-2"></div>
+                    <div class="campaign-dot" id="dot-3"></div>
                 </div>
             </div>
         </div>
     </div>
+    <style>
+        .campaign-slider { display:flex; flex-direction:column; gap:0.75rem; }
+        .campaign-card {
+            display:flex; align-items:center; gap:1rem;
+            background:rgba(255,255,255,0.05); backdrop-filter:blur(10px);
+            border:1px solid rgba(255,255,255,0.1); padding:1rem 1.25rem;
+            border-radius: 12px; transition: all 0.5s cubic-bezier(0.4,0,0.2,1);
+            opacity:0; max-height:0; overflow:hidden; margin:0; padding:0;
+        }
+        .campaign-card.campaign-active {
+            opacity:1; max-height:80px; padding:1rem 1.25rem; margin:0;
+            background:rgba(201,168,76,0.12); border-color:rgba(201,168,76,0.3);
+            transform: translateX(0);
+        }
+        .campaign-icon { font-size:2rem; flex-shrink:0; }
+        .campaign-text { display:flex; flex-direction:column; gap:2px; }
+        .campaign-text strong { color:#fff; font-size:0.9rem; }
+        .campaign-text span { color:rgba(255,255,255,0.7); font-size:0.85rem; }
+        .campaign-dot {
+            width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+        }
+        .campaign-dot-active { background:var(--gold); width:24px; border-radius:4px; }
+    </style>
+    <script>
+        let currentCampaign = 0;
+        const totalCampaigns = 4;
+        setInterval(() => {
+            document.getElementById('campaign-' + currentCampaign).classList.remove('campaign-active');
+            document.getElementById('dot-' + currentCampaign).classList.remove('campaign-dot-active');
+            currentCampaign = (currentCampaign + 1) % totalCampaigns;
+            document.getElementById('campaign-' + currentCampaign).classList.add('campaign-active');
+            document.getElementById('dot-' + currentCampaign).classList.add('campaign-dot-active');
+        }, 3000);
+    </script>
 </body>
 </html>

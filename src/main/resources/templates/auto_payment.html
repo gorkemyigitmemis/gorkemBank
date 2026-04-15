@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Otomatik Ödeme - GörkemBank</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script th:src="@{/js/theme.js}"></script>
+</head>
+<body class="app-body">
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="logo-icon-sm">🏦</span>
+            <span class="nav-title">GörkemBank</span>
+        </div>
+        <div class="nav-links">
+            <a th:href="@{/panel}" class="nav-link">Panel</a>
+            <a th:href="@{/transfer}" class="nav-link">Transfer</a>
+            <a th:href="@{/kredi}" class="nav-link">Kredi</a>
+            <a th:href="@{/otomatik-odeme}" class="nav-link active">Ödeme</a>
+            <a th:href="@{/borsa}" class="nav-link">Borsa</a>
+            <a th:href="@{/gecmis}" class="nav-link">Geçmiş</a>
+            <a sec:authorize="hasRole('ADMIN')" th:href="@{/analitik}" class="nav-link nav-link-admin">📊 Analitik</a>
+        </div>
+        <div class="nav-user" style="display:flex; align-items:center; gap:10px;">
+            <button type="button" class="theme-toggle" onclick="toggleTheme()">🌙</button>
+            <span class="user-greeting">Merhaba, <strong th:text="${user.ad}">Kullanıcı</strong></span>
+            <form th:action="@{/cikis}" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-outline btn-sm">Çıkış</button>
+            </form>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="page-header">
+            <h1>🔄 Otomatik Ödeme Talimatları</h1>
+            <p>Fatura ve aboneliklerinizi otomatik ödeme talimatıyla yönetin.</p>
+        </div>
+
+        <div th:if="${successMessage}" class="alert alert-success">
+            <span>✅</span>
+            <span th:text="${successMessage}"></span>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-error">
+            <span>⚠️</span>
+            <span th:text="${errorMessage}"></span>
+        </div>
+
+        <!-- Özet Kartları -->
+        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:1rem; margin-bottom:2rem;">
+            <div class="stat-card">
+                <div class="stat-icon">📋</div>
+                <div class="stat-value" th:text="${activeCount}">0</div>
+                <div class="stat-label">Aktif Talimat</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-value">₺<span th:text="${#numbers.formatDecimal(totalMonthly, 1, 'COMMA', 2, 'POINT')}">0</span></div>
+                <div class="stat-label">Aylık Toplam</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📦</div>
+                <div class="stat-value" th:text="${allPayments.size()}">0</div>
+                <div class="stat-label">Toplam Talimat</div>
+            </div>
+        </div>
+
+        <!-- Yeni Talimat Formu -->
+        <div class="section-title"><h2>➕ Yeni Otomatik Ödeme Talimatı</h2></div>
+        <div class="form-card" style="max-width:100%; margin-bottom:2rem;">
+            <form th:action="@{/otomatik-odeme/olustur}" method="post" class="transfer-form">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:1rem;">
+                    <div class="form-group">
+                        <label for="category">Ödeme Kategorisi</label>
+                        <select id="category" name="category" required onchange="updateProviders()">
+                            <option value="">Kategori Seçiniz...</option>
+                            <option value="ELEKTRIK">⚡ Elektrik</option>
+                            <option value="DOGALGAZ">🔥 Doğalgaz</option>
+                            <option value="SU">💧 Su</option>
+                            <option value="INTERNET">🌐 İnternet</option>
+                            <option value="CEP_TELEFONU">📱 Cep Telefonu</option>
+                            <option value="ISPARK">🅿️ İSPARK</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="provider">Sağlayıcı Firma</label>
+                        <select id="provider" name="provider" required>
+                            <option value="">Önce kategori seçin...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="subscriberNo">Abonelik / Üyelik Numarası</label>
+                        <input type="text" id="subscriberNo" name="subscriberNo" placeholder="1234567890" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subscriberName">Abone Adı (Opsiyonel)</label>
+                        <input type="text" id="subscriberName" name="subscriberName" placeholder="Ad Soyad">
+                    </div>
+                </div>
+                <div class="form-group" style="margin-top:1rem;">
+                    <label for="accountId">Ödemenin Yapılacağı Hesap</label>
+                    <select id="accountId" name="accountId" required>
+                        <option value="">Hesap seçiniz...</option>
+                        <option th:each="account : ${accounts}"
+                                th:value="${account.id}"
+                                th:text="${account.accountType + ' - ' + account.formattedIban + ' (₺' + #numbers.formatDecimal(account.balance, 1, 'COMMA', 2, 'POINT') + ')'}">
+                        </option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full" style="margin-top:1rem;">
+                    ✅ Talimat Oluştur
+                </button>
+            </form>
+        </div>
+
+        <!-- Aktif Talimatlarım -->
+        <div class="section-title"><h2>📋 Talimatlarım</h2></div>
+
+        <div th:if="${allPayments.isEmpty()}" class="empty-state">
+            <p>📭 Henüz otomatik ödeme talimatınız bulunmuyor.</p>
+        </div>
+
+        <div th:if="${!allPayments.isEmpty()}" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap:1.25rem; margin-bottom:2rem;">
+            <div th:each="ap : ${allPayments}" class="account-card" th:style="${!ap.active ? 'opacity:0.6;' : ''}">
+                <!-- Durum badge -->
+                <span th:if="${ap.active}" class="badge badge-success" style="position:absolute; top:1rem; right:1rem;">Aktif</span>
+                <span th:if="${!ap.active}" class="badge badge-danger" style="position:absolute; top:1rem; right:1rem;">İptal</span>
+
+                <!-- Kategori ve Sağlayıcı -->
+                <div style="margin-bottom:0.5rem;">
+                    <span class="account-type" th:text="${ap.categoryDisplay}">⚡ Elektrik</span>
+                </div>
+                <div style="font-size:1.25rem; font-weight:700; color:var(--text); margin-bottom:0.5rem;" th:text="${ap.provider}">EDAŞ</div>
+
+                <!-- Aylık Tutar -->
+                <div class="account-balance" style="font-size:1.5rem;">
+                    <span class="currency-sm">₺</span><span th:text="${#numbers.formatDecimal(ap.monthlyAmount, 1, 'COMMA', 2, 'POINT')}">0</span>
+                    <span style="font-size:0.8rem; color:var(--text-muted);">/ay</span>
+                </div>
+
+                <!-- Detaylar -->
+                <div class="account-details" style="gap:0.4rem;">
+                    <div class="account-detail">
+                        <span class="detail-label">Üyelik No</span>
+                        <span class="detail-value iban-text" th:text="${ap.subscriberNo}">123456</span>
+                    </div>
+                    <div class="account-detail">
+                        <span class="detail-label">Abone</span>
+                        <span class="detail-value" th:text="${ap.subscriberName}">Ad Soyad</span>
+                    </div>
+                    <div class="account-detail" th:if="${ap.nextPaymentDate != null}">
+                        <span class="detail-label">Sonraki Ödeme</span>
+                        <span class="detail-value" th:text="${#temporals.format(ap.nextPaymentDate, 'dd.MM.yyyy')}">15.05.2026</span>
+                    </div>
+                    <div class="account-detail">
+                        <span class="detail-label">Oluşturulma</span>
+                        <span class="detail-value" th:text="${#temporals.format(ap.createdAt, 'dd.MM.yyyy')}">01.01.2026</span>
+                    </div>
+                </div>
+
+                <!-- İptal Butonu -->
+                <form th:if="${ap.active}" th:action="@{'/otomatik-odeme/iptal/' + ${ap.id}}" method="post" style="margin-top:1rem;">
+                    <button type="submit" class="btn btn-outline btn-full btn-sm" style="color:var(--error); border-color:var(--error);"
+                            onclick="return confirm('Bu otomatik ödeme talimatını iptal etmek istediğinize emin misiniz?')">
+                        🗑️ Talimatı İptal Et
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const providersMap = {
+            'ELEKTRIK': ['EDAŞ', 'Enerjisa', 'CK Enerji', 'Toroslar EDAŞ'],
+            'DOGALGAZ': ['İGDAŞ', 'EnerjiSA Doğalgaz', 'Başkent Doğalgaz'],
+            'SU': ['İSKİ', 'ASKİ', 'SASKİ'],
+            'INTERNET': ['Türk Telekom', 'Vodafone', 'Turkcell Superonline', 'TurkNet'],
+            'CEP_TELEFONU': ['Türk Telekom', 'Vodafone', 'Turkcell'],
+            'ISPARK': ['İSPARK']
+        };
+
+        function updateProviders() {
+            const cat = document.getElementById('category').value;
+            const sel = document.getElementById('provider');
+            sel.innerHTML = '<option value="">Sağlayıcı seçiniz...</option>';
+            if (providersMap[cat]) {
+                providersMap[cat].forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = p;
+                    opt.textContent = p;
+                    sel.appendChild(opt);
+                });
+            }
+        }
+    </script>
+</body>
+</html>

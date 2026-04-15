@@ -83,7 +83,9 @@ public class SecurityConfig {
                 // Analitik ve Loglar sadece ADMIN görebilir
                 .requestMatchers("/analitik/**", "/loglar/**").hasRole("ADMIN")
                 // Panel, Transfer, Geçmiş sadece USER görebilir (Admin göremez)
-                .requestMatchers("/panel", "/transfer", "/gecmis", "/dekont/**").hasRole("USER")
+                .requestMatchers("/panel", "/transfer", "/gecmis", "/dekont/**",
+                                 "/kredi/**", "/otomatik-odeme/**", "/borsa/**",
+                                 "/doviz/**").hasRole("USER")
                 // Geri kalan her şey GİRİŞ GEREKTİRİR
                 .anyRequest().authenticated()
             )

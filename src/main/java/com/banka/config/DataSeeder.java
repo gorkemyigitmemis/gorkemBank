@@ -30,6 +30,8 @@ public class DataSeeder implements CommandLineRunner {
     @Autowired private TransactionRepository transactionRepository;
     @Autowired private ActivityLogRepository activityLogRepository;
     @Autowired private LoginHistoryRepository loginHistoryRepository;
+    @Autowired private LoanRepository loanRepository;
+    @Autowired private AutoPaymentRepository autoPaymentRepository;
     @Autowired private PasswordEncoder passwordEncoder;
 
     private final Random random = new Random(42); // Sabit seed = her seferinde aynı rastgele veri
@@ -202,12 +204,39 @@ public class DataSeeder implements CommandLineRunner {
         }
         System.out.println("   🔐 1000 giriş kaydı oluşturuldu");
 
+        // 7. Demo kullanıcıya örnek kredi ekle (V6)
+        Loan demoLoan = new Loan();
+        demoLoan.setUser(demo);
+        demoLoan.setAccount(demoAccount);
+        demoLoan.setLoanType("IHTIYAC");
+        demoLoan.setPrincipalAmount(new BigDecimal("15000.00"));
+        demoLoan.setInterestRate(new BigDecimal("3.29"));
+        demoLoan.setTermMonths(36);
+        demoLoan.setPaidMonths(5);
+        // Annuity hesap: M = 15000 * [0.0329*(1.0329)^36] / [(1.0329)^36 - 1]
+        demoLoan.setMonthlyPayment(new BigDecimal("653.48"));
+        demoLoan.setTotalAmount(new BigDecimal("23525.28"));
+        demoLoan.setRemainingAmount(new BigDecimal("20257.88"));
+        demoLoan.setNextPaymentDate(LocalDateTime.now().plusDays(12));
+        demoLoan.setStatus("AKTIF");
+        demoLoan.setCreatedAt(LocalDateTime.now().minusMonths(5));
+        loanRepository.save(demoLoan);
+        System.out.println("   💳 Demo kredi oluşturuldu (15.000₺ İhtiyaç, 36 ay)");
+
+        // 8. Demo kullanıcıya otomatik ödeme talimatları ekle (V6)
+        createAutoPaymentSeed(demo, demoAccount, "ELEKTRIK", "EDAŞ", "3045678901", new BigDecimal("342.50"));
+        createAutoPaymentSeed(demo, demoAccount, "INTERNET", "Türk Telekom", "5501234567", new BigDecimal("279.90"));
+        createAutoPaymentSeed(demo, demoAccount, "DOGALGAZ", "İGDAŞ", "7890123456", new BigDecimal("185.75"));
+        System.out.println("   🔄 3 otomatik ödeme talimatı oluşturuldu");
+
         System.out.println("✅ Tüm demo veriler başarıyla oluşturuldu!");
         System.out.println("=".repeat(50));
         System.out.println("🏦 Banka uygulaması hazır!");
         System.out.println("   🌐 http://localhost:8080");
         System.out.println("   👤 Admin: admin@banka.com / admin123");
         System.out.println("   👤 Demo:  demo@banka.com / demo123");
+        System.out.println("   💳 Kredi: http://localhost:8080/kredi");
+        System.out.println("   🔄 Ödeme: http://localhost:8080/otomatik-odeme");
         System.out.println("   📊 Analytics: http://localhost:8080/analitik (admin ile giriş yap)");
         System.out.println("   🗄️ H2 Console: http://localhost:8080/h2-console");
         System.out.println("=".repeat(50));
@@ -267,5 +296,21 @@ public class DataSeeder implements CommandLineRunner {
         if (changed) {
             System.out.println("🔄 Mevcut işlemler geriye dönük olarak kategorize edildi!");
         }
+    }
+
+    private void createAutoPaymentSeed(User user, Account account, String category, 
+                                         String provider, String subscriberNo, BigDecimal amount) {
+        AutoPayment ap = new AutoPayment();
+        ap.setUser(user);
+        ap.setAccount(account);
+        ap.setCategory(category);
+        ap.setProvider(provider);
+        ap.setSubscriberNo(subscriberNo);
+        ap.setSubscriberName(user.getFullName());
+        ap.setMonthlyAmount(amount);
+        ap.setNextPaymentDate(LocalDateTime.now().plusMonths(1).withDayOfMonth(15));
+        ap.setActive(true);
+        ap.setCreatedAt(LocalDateTime.now().minusMonths(2));
+        autoPaymentRepository.save(ap);
     }
 }

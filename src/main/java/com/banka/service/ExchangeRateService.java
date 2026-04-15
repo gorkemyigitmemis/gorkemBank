@@ -41,18 +41,23 @@ public class ExchangeRateService {
         try {
             Map<String, Double> rates = new LinkedHashMap<>();
 
-            // USD/TRY kuru
+            // Döviz kurları
             double usdTry = fetchRate("USD", "TRY");
-            // EUR/TRY kuru
             double eurTry = fetchRate("EUR", "TRY");
-            // GBP/TRY kuru
             double gbpTry = fetchRate("GBP", "TRY");
+            double chfTry = fetchRate("CHF", "TRY");
+            double jpyRate = fetchRate("JPY", "TRY");
 
             rates.put("USD", usdTry);
             rates.put("EUR", eurTry);
             rates.put("GBP", gbpTry);
+            rates.put("CHF", chfTry);
+            rates.put("JPY", jpyRate * 100);  // 100 JPY bazında
+            rates.put("CNY", usdTry / 7.25); // Yaklaşık CNY/TRY
             // Altın simülasyonu (gram fiyatı yaklaşık)
             rates.put("XAU", usdTry * 95.5);
+            // Gümüş simülasyonu
+            rates.put("XAG", usdTry * 1.05);
 
             cachedRates = rates;
             lastFetchTime = LocalDateTime.now();
@@ -108,7 +113,11 @@ public class ExchangeRateService {
         defaults.put("USD", 38.50);
         defaults.put("EUR", 42.20);
         defaults.put("GBP", 49.10);
+        defaults.put("CHF", 46.80);
+        defaults.put("JPY", 25.60);
+        defaults.put("CNY", 5.31);
         defaults.put("XAU", 3676.75);
+        defaults.put("XAG", 40.43);
         return defaults;
     }
 

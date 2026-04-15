@@ -41,6 +41,49 @@
     --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.6);
 }
 
+/* Dark Mode - Tüm var(--primary) kullanan metin düzeltmeleri */
+[data-theme="dark"] .auth-logo h1,
+[data-theme="dark"] .dashboard-header h1,
+[data-theme="dark"] .page-header h1,
+[data-theme="dark"] .section-title h2,
+[data-theme="dark"] .chart-card h3,
+[data-theme="dark"] .account-balance,
+[data-theme="dark"] .exchange-rate,
+[data-theme="dark"] .exchange-currency,
+[data-theme="dark"] .stat-value,
+[data-theme="dark"] .log-amount {
+    color: var(--text) !important;
+}
+
+/* Dark Mode - Form elemanları */
+[data-theme="dark"] .form-group input,
+[data-theme="dark"] .form-group select,
+[data-theme="dark"] .form-group textarea {
+    color: var(--text);
+    background: var(--surface-alt);
+    border-color: var(--border);
+}
+
+/* Dark Mode - Alert/Badge düzeltmeleri */
+[data-theme="dark"] .alert-error {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+}
+[data-theme="dark"] .alert-success {
+    background: rgba(16, 185, 129, 0.15);
+    border-color: rgba(16, 185, 129, 0.3);
+    color: #6ee7b7;
+}
+
+/* Dark Mode - Tablo ve data hücreleri */
+[data-theme="dark"] .data-table td {
+    color: var(--text);
+}
+[data-theme="dark"] .detail-value {
+    color: var(--text);
+}
+
 /* Theme Toggle Butonu */
 .theme-toggle {
     background: transparent;
