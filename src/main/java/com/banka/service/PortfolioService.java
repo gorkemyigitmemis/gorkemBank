@@ -12,11 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * PORTFÖY SERVİSİ
- * Döviz alım/satım işlemlerini ve portföy yönetimini yapar.
+ * Döviz/hisse alım-satım işlemlerini ve portföy yönetimini yapar.
+ * Ağırlıklı ortalama maliyet yöntemiyle kâr/zarar takibi yapar.
  */
 @Service
 public class PortfolioService {
@@ -32,7 +32,8 @@ public class PortfolioService {
     }
 
     /**
-     * Döviz Alım İşlemi
+     * Döviz / Hisse Alım İşlemi
+     * avgBuyRate = (eskiMiktar * eskiOrtalama + yeniMiktar * yeniFiyat) / toplamMiktar
      */
     @Transactional
     public void buyCurrency(User user, String currency, BigDecimal amountToBuy, BigDecimal rate) {
@@ -40,33 +41,42 @@ public class PortfolioService {
             throw new RuntimeException("Miktar 0'dan büyük olmalıdır.");
         }
 
-        // 1. Kullanıcının birincil TRY hesabını bul -> VADESIZ
         Account primaryAccount = user.getAccounts().stream()
                 .filter(a -> a.getAccountType().equals("VADESIZ") && a.isActive())
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Vadesiz hesap bulunamadı!"));
 
-        // 2. Gereken TRY miktarını hesapla
         BigDecimal requiredTry = amountToBuy.multiply(rate);
 
-        // 3. Bakiye kontrolü
         if (primaryAccount.getBalance().compareTo(requiredTry) < 0) {
-            throw new RuntimeException("Yetersiz bakiye. Gereken tutar: " + requiredTry + " TL");
+            throw new RuntimeException("Yetersiz bakiye. Gereken tutar: " + requiredTry.setScale(2, RoundingMode.HALF_UP) + " TL");
         }
 
-        // 4. TRY düş
         primaryAccount.setBalance(primaryAccount.getBalance().subtract(requiredTry));
         accountRepository.save(primaryAccount);
 
-        // 5. Portföye Ekle (veya güncelle)
         Portfolio portfolio = portfolioRepository.findByUserIdAndCurrency(user.getId(), currency)
                 .orElse(new Portfolio(user, currency, BigDecimal.ZERO));
-        portfolio.setAmount(portfolio.getAmount().add(amountToBuy));
+
+        BigDecimal oldAmount = portfolio.getAmount();
+        BigDecimal oldCost = portfolio.getTotalCost() != null ? portfolio.getTotalCost() : BigDecimal.ZERO;
+
+        BigDecimal newTotalAmount = oldAmount.add(amountToBuy);
+        BigDecimal newTotalCost = oldCost.add(requiredTry);
+
+        portfolio.setAmount(newTotalAmount);
+        portfolio.setTotalCost(newTotalCost);
+
+        if (newTotalAmount.compareTo(BigDecimal.ZERO) > 0) {
+            portfolio.setAvgBuyRate(newTotalCost.divide(newTotalAmount, 4, RoundingMode.HALF_UP));
+        }
+
         portfolioRepository.save(portfolio);
     }
 
     /**
-     * Döviz Satım İşlemi
+     * Döviz / Hisse Satım İşlemi
+     * Satışta avgBuyRate değişmez, totalCost orantılı düşer
      */
     @Transactional
     public void sellCurrency(User user, String currency, BigDecimal amountToSell, BigDecimal rate) {
@@ -74,30 +84,30 @@ public class PortfolioService {
             throw new RuntimeException("Miktar 0'dan büyük olmalıdır.");
         }
 
-        // 1. Kullanıcının elinde o dövizden var mı?
         Portfolio portfolio = portfolioRepository.findByUserIdAndCurrency(user.getId(), currency)
                 .orElseThrow(() -> new RuntimeException("Portföyünüzde " + currency + " bulunmuyor."));
 
-        // 2. Yeterli döviz var mı?
         if (portfolio.getAmount().compareTo(amountToSell) < 0) {
             throw new RuntimeException("Yetersiz " + currency + " bakiyesi.");
         }
 
-        // 3. Kullanıcının TRY hesabını bul
         Account primaryAccount = user.getAccounts().stream()
                 .filter(a -> a.getAccountType().equals("VADESIZ") && a.isActive())
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Vadesiz hesap bulunamadı!"));
 
-        // 4. Eklenecek TRY'yi hesapla
         BigDecimal convertedTry = amountToSell.multiply(rate);
 
-        // 5. TRY Ekle
         primaryAccount.setBalance(primaryAccount.getBalance().add(convertedTry));
         accountRepository.save(primaryAccount);
 
-        // 6. Portföyden düş
+        BigDecimal costReduction = amountToSell.multiply(
+                portfolio.getAvgBuyRate() != null ? portfolio.getAvgBuyRate() : BigDecimal.ZERO);
+
         portfolio.setAmount(portfolio.getAmount().subtract(amountToSell));
+        BigDecimal currentCost = portfolio.getTotalCost() != null ? portfolio.getTotalCost() : BigDecimal.ZERO;
+        portfolio.setTotalCost(currentCost.subtract(costReduction).max(BigDecimal.ZERO));
+
         portfolioRepository.save(portfolio);
     }
 }

@@ -32,6 +32,7 @@ public class DataSeeder implements CommandLineRunner {
     @Autowired private LoginHistoryRepository loginHistoryRepository;
     @Autowired private LoanRepository loanRepository;
     @Autowired private AutoPaymentRepository autoPaymentRepository;
+    @Autowired private PortfolioRepository portfolioRepository;
     @Autowired private PasswordEncoder passwordEncoder;
 
     private final Random random = new Random(42); // Sabit seed = her seferinde aynı rastgele veri
@@ -228,6 +229,103 @@ public class DataSeeder implements CommandLineRunner {
         createAutoPaymentSeed(demo, demoAccount, "INTERNET", "Türk Telekom", "5501234567", new BigDecimal("279.90"));
         createAutoPaymentSeed(demo, demoAccount, "DOGALGAZ", "İGDAŞ", "7890123456", new BigDecimal("185.75"));
         System.out.println("   🔄 3 otomatik ödeme talimatı oluşturuldu");
+
+        // 9. V7: Rastgele kullanıcılara kredi ekle (admin dashboard için)
+        String[] loanTypes = {"IHTIYAC", "KONUT", "TASIT"};
+        BigDecimal[] rates = {new BigDecimal("3.29"), new BigDecimal("2.59"), new BigDecimal("2.89")};
+        int loanCount = 0;
+        for (int i = 2; i < allUsers.size() && loanCount < 40; i += 3) {
+            User loanUser = allUsers.get(i);
+            Account loanAccount = allAccounts.get(i);
+            int typeIdx = random.nextInt(3);
+            String type = loanTypes[typeIdx];
+            int[] termOpts = type.equals("KONUT") ? new int[]{60, 120, 180} : new int[]{12, 24, 36, 48};
+            int term = termOpts[random.nextInt(termOpts.length)];
+            BigDecimal principal;
+            if (type.equals("KONUT")) {
+                principal = new BigDecimal(200000 + random.nextInt(1800000));
+            } else if (type.equals("TASIT")) {
+                principal = new BigDecimal(100000 + random.nextInt(400000));
+            } else {
+                principal = new BigDecimal(5000 + random.nextInt(95000));
+            }
+            int paidM = random.nextInt(Math.min(term, 12));
+            BigDecimal monthlyP = principal.multiply(new BigDecimal("0.045")).setScale(2, java.math.RoundingMode.HALF_UP);
+            BigDecimal totalA = monthlyP.multiply(new BigDecimal(term));
+            BigDecimal remaining = monthlyP.multiply(new BigDecimal(term - paidM));
+
+            Loan loan = new Loan();
+            loan.setUser(loanUser);
+            loan.setAccount(loanAccount);
+            loan.setLoanType(type);
+            loan.setPrincipalAmount(principal);
+            loan.setInterestRate(rates[typeIdx]);
+            loan.setTermMonths(term);
+            loan.setPaidMonths(paidM);
+            loan.setMonthlyPayment(monthlyP);
+            loan.setTotalAmount(totalA);
+            loan.setRemainingAmount(remaining);
+            loan.setNextPaymentDate(LocalDateTime.now().plusDays(random.nextInt(30)));
+            loan.setStatus(paidM >= term ? "TAMAMLANDI" : "AKTIF");
+            loan.setCreatedAt(LocalDateTime.now().minusMonths(paidM + 1));
+            loanRepository.save(loan);
+            loanCount++;
+        }
+        System.out.println("   💳 " + loanCount + " rastgele kredi oluşturuldu");
+
+        // 10. V7: Rastgele kullanıcılara portföy (döviz/hisse) ekle
+        String[] currencies = {"USD", "EUR", "GBP", "XAU", "THYAO", "ASELS", "BIMAS", "KCHOL", "GARAN"};
+        double[] approxRates = {44.04, 51.88, 59.68, 4205.0, 319.50, 89.35, 178.90, 198.40, 142.30};
+        int portfolioCount = 0;
+        for (int i = 1; i < allUsers.size() && portfolioCount < 50; i += 2) {
+            User pUser = allUsers.get(i);
+            int numAssets = 1 + random.nextInt(3);
+            Set<String> usedCurrencies = new HashSet<>();
+            for (int j = 0; j < numAssets; j++) {
+                int idx = random.nextInt(currencies.length);
+                if (usedCurrencies.contains(currencies[idx])) continue;
+                usedCurrencies.add(currencies[idx]);
+                String currency = currencies[idx];
+                double rate = approxRates[idx];
+                boolean isStock = idx >= 4;
+                BigDecimal amount;
+                if (isStock) {
+                    amount = new BigDecimal(5 + random.nextInt(50));
+                } else if (currency.equals("XAU")) {
+                    amount = new BigDecimal(1 + random.nextInt(10)).setScale(4, java.math.RoundingMode.HALF_UP);
+                } else {
+                    amount = new BigDecimal(50 + random.nextInt(500)).setScale(4, java.math.RoundingMode.HALF_UP);
+                }
+                // Alış fiyatını mevcut fiyattan ±%15 civarı simüle et
+                double buyRate = rate * (0.85 + random.nextDouble() * 0.30);
+                BigDecimal avgBuy = BigDecimal.valueOf(buyRate).setScale(4, java.math.RoundingMode.HALF_UP);
+                BigDecimal totalCost = amount.multiply(avgBuy).setScale(2, java.math.RoundingMode.HALF_UP);
+
+                Portfolio portfolio = new Portfolio(pUser, currency, amount);
+                portfolio.setAvgBuyRate(avgBuy);
+                portfolio.setTotalCost(totalCost);
+                portfolioRepository.save(portfolio);
+                portfolioCount++;
+            }
+        }
+        System.out.println("   📈 " + portfolioCount + " portföy pozisyonu oluşturuldu");
+
+        // 11. Demo kullanıcıya da portföy verisi ekle (P/L görsün)
+        Portfolio demoUsd = new Portfolio(demo, "USD", new BigDecimal("100.0000"));
+        demoUsd.setAvgBuyRate(new BigDecimal("42.5000"));
+        demoUsd.setTotalCost(new BigDecimal("4250.00"));
+        portfolioRepository.save(demoUsd);
+
+        Portfolio demoThyao = new Portfolio(demo, "THYAO", new BigDecimal("25.0000"));
+        demoThyao.setAvgBuyRate(new BigDecimal("305.0000"));
+        demoThyao.setTotalCost(new BigDecimal("7625.00"));
+        portfolioRepository.save(demoThyao);
+
+        Portfolio demoGold = new Portfolio(demo, "XAU", new BigDecimal("2.0000"));
+        demoGold.setAvgBuyRate(new BigDecimal("3950.0000"));
+        demoGold.setTotalCost(new BigDecimal("7900.00"));
+        portfolioRepository.save(demoGold);
+        System.out.println("   📈 Demo kullanıcıya portföy oluşturuldu (USD, THYAO, XAU)");
 
         System.out.println("✅ Tüm demo veriler başarıyla oluşturuldu!");
         System.out.println("=".repeat(50));
