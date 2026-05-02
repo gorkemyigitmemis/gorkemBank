@@ -46,7 +46,7 @@
             <div class="balance-label">Toplam TRY Bakiye</div>
             <div class="balance-amount">
                 <span class="currency">₺</span>
-                <span class="amount" th:text="${#numbers.formatDecimal(totalBalance, 1, 'COMMA', 2, 'POINT')}">0,00</span>
+                <span class="amount" th:text="${#numbers.formatDecimal(totalBalance, 1, 'POINT', 2, 'COMMA')}">0,00</span>
             </div>
             <div class="balance-actions">
                 <a th:href="@{/transfer}" class="btn btn-gold">💸 Para Transferi</a>
@@ -57,7 +57,7 @@
             <div th:if="${portfolios != null and !portfolios.isEmpty()}" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1);">
                 <div class="balance-label" style="margin-bottom: 0.5rem; font-size: 0.85rem; display: flex; align-items: center; justify-content: space-between;">
                     <span>PORTFÖYÜM</span>
-                    <span style="font-weight: 600; color: var(--gold);">(<span th:text="${#numbers.formatDecimal(portfolioTotalTry, 1, 'COMMA', 2, 'POINT')}"></span> TL)</span>
+                    <span style="font-weight: 600; color: var(--gold);">(<span th:text="${#numbers.formatDecimal(portfolioTotalTry, 1, 'POINT', 2, 'COMMA')}"></span> TL)</span>
                 </div>
                 <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
                     <div th:each="portfolio : ${portfolios}" 
@@ -66,7 +66,7 @@
                         <span th:if="${portfolio.currency == 'EUR'}">🇪🇺</span>
                         <span th:if="${portfolio.currency == 'GBP'}">🇬🇧</span>
                         <span th:if="${portfolio.currency == 'XAU'}">🥇</span>
-                        <span th:text="${#numbers.formatDecimal(portfolio.amount, 1, 'COMMA', 2, 'POINT')} + ' ' + ${portfolio.currency}" style="font-weight: 500; color: white;">0.00 USD</span>
+                        <span th:text="${#numbers.formatDecimal(portfolio.amount, 1, 'POINT', 2, 'COMMA')} + ' ' + ${portfolio.currency}" style="font-weight: 500; color: white;">0.00 USD</span>
                     </div>
                 </div>
             </div>
@@ -81,7 +81,7 @@
                 <div class="account-type" th:text="${account.accountType}">VADESIZ</div>
                 <div class="account-balance">
                     <span class="currency-sm">₺</span>
-                    <span class="amount-sm" th:text="${#numbers.formatDecimal(account.balance, 1, 'COMMA', 2, 'POINT')}">0,00</span>
+                    <span class="amount-sm" th:text="${#numbers.formatDecimal(account.balance, 1, 'POINT', 2, 'COMMA')}">0,00</span>
                 </div>
                 <div class="account-details">
                     <div>
@@ -104,19 +104,19 @@
         <div th:if="${buyRates != null}" style="display:grid; grid-template-columns: repeat(4, 1fr); gap:0.75rem; margin-bottom:2rem;">
             <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:0.75rem 1rem; text-align:center; cursor:pointer; transition:var(--transition);" onclick="window.location='/borsa'">
                 <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">🇺🇸 USD</div>
-                <div style="font-family:'Outfit',sans-serif; font-weight:700; font-size:1.1rem; color:var(--text);" th:text="${#numbers.formatDecimal(buyRates.get('USD'), 1, 'COMMA', 2, 'POINT')}">0</div>
+                <div style="font-family:'Outfit',sans-serif; font-weight:700; font-size:1.1rem; color:var(--text);" th:text="${#numbers.formatDecimal(buyRates.get('USD'), 1, 'POINT', 2, 'COMMA')}">0</div>
             </div>
             <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:0.75rem 1rem; text-align:center; cursor:pointer; transition:var(--transition);" onclick="window.location='/borsa'">
                 <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">🇪🇺 EUR</div>
-                <div style="font-family:'Outfit',sans-serif; font-weight:700; font-size:1.1rem; color:var(--text);" th:text="${#numbers.formatDecimal(buyRates.get('EUR'), 1, 'COMMA', 2, 'POINT')}">0</div>
+                <div style="font-family:'Outfit',sans-serif; font-weight:700; font-size:1.1rem; color:var(--text);" th:text="${#numbers.formatDecimal(buyRates.get('EUR'), 1, 'POINT', 2, 'COMMA')}">0</div>
             </div>
             <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:0.75rem 1rem; text-align:center; cursor:pointer; transition:var(--transition);" onclick="window.location='/borsa'">
                 <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">🇬🇧 GBP</div>
-                <div style="font-family:'Outfit',sans-serif; font-weight:700; font-size:1.1rem; color:var(--text);" th:text="${#numbers.formatDecimal(buyRates.get('GBP'), 1, 'COMMA', 2, 'POINT')}">0</div>
+                <div style="font-family:'Outfit',sans-serif; font-weight:700; font-size:1.1rem; color:var(--text);" th:text="${#numbers.formatDecimal(buyRates.get('GBP'), 1, 'POINT', 2, 'COMMA')}">0</div>
             </div>
             <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:0.75rem 1rem; text-align:center; cursor:pointer; transition:var(--transition);" onclick="window.location='/borsa'">
                 <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">🥇 ALTIN</div>
-                <div style="font-family:'Outfit',sans-serif; font-weight:700; font-size:1.1rem; color:var(--gold);" th:text="${#numbers.formatDecimal(buyRates.get('XAU'), 1, 'COMMA', 0, 'POINT')}">0</div>
+                <div style="font-family:'Outfit',sans-serif; font-weight:700; font-size:1.1rem; color:var(--gold);" th:text="${#numbers.formatDecimal(buyRates.get('XAU'), 1, 'POINT', 0, 'COMMA')}">0</div>
             </div>
         </div>
 
@@ -139,7 +139,7 @@
                         <span th:style="'padding:3px 10px; border-radius:12px; font-size:0.8rem; font-weight:700;' + (${pnl.profitTry.doubleValue() >= 0} ? 'background:rgba(16,185,129,0.12);color:#059669;' : 'background:rgba(239,68,68,0.12);color:#dc2626;')">
                             <span th:if="${pnl.profitTry.doubleValue() >= 0}">▲</span>
                             <span th:if="${pnl.profitTry.doubleValue() < 0}">▼</span>
-                            %<span th:text="${#numbers.formatDecimal(pnl.profitPct.doubleValue() < 0 ? -pnl.profitPct.doubleValue() : pnl.profitPct.doubleValue(), 1, 'COMMA', 2, 'POINT')}">0</span>
+                            %<span th:text="${#numbers.formatDecimal(pnl.profitPct.doubleValue() < 0 ? -pnl.profitPct.doubleValue() : pnl.profitPct.doubleValue(), 1, 'POINT', 2, 'COMMA')}">0</span>
                         </span>
                     </div>
                     <!-- Alt: sayılar -->
@@ -147,18 +147,18 @@
                         <div style="text-align:center; background:var(--surface-alt); padding:0.4rem; border-radius:6px;">
                             <div style="color:var(--text-muted); font-size:0.65rem; text-transform:uppercase;">Miktar</div>
                             <div style="font-weight:600; color:var(--text);">
-                                <span th:if="${pnl.isStock}" th:text="${#numbers.formatDecimal(pnl.amount, 1, 'COMMA', 0, 'POINT')}">0</span>
-                                <span th:if="${!pnl.isStock}" th:text="${#numbers.formatDecimal(pnl.amount, 1, 'COMMA', 2, 'POINT')}">0</span>
+                                <span th:if="${pnl.isStock}" th:text="${#numbers.formatDecimal(pnl.amount, 1, 'POINT', 0, 'COMMA')}">0</span>
+                                <span th:if="${!pnl.isStock}" th:text="${#numbers.formatDecimal(pnl.amount, 1, 'POINT', 2, 'COMMA')}">0</span>
                             </div>
                         </div>
                         <div style="text-align:center; background:var(--surface-alt); padding:0.4rem; border-radius:6px;">
                             <div style="color:var(--text-muted); font-size:0.65rem; text-transform:uppercase;">Maliyet</div>
-                            <div style="font-weight:600; color:var(--text);">₺<span th:text="${#numbers.formatDecimal(pnl.totalCost, 1, 'COMMA', 0, 'POINT')}">0</span></div>
+                            <div style="font-weight:600; color:var(--text);">₺<span th:text="${#numbers.formatDecimal(pnl.totalCost, 1, 'POINT', 0, 'COMMA')}">0</span></div>
                         </div>
                         <div style="text-align:center; background:var(--surface-alt); padding:0.4rem; border-radius:6px;">
                             <div style="color:var(--text-muted); font-size:0.65rem; text-transform:uppercase;">Kâr/Zarar</div>
                             <div th:style="'font-weight:700;' + (${pnl.profitTry.doubleValue() >= 0} ? 'color:#059669;' : 'color:#dc2626;')">
-                                <span th:if="${pnl.profitTry.doubleValue() >= 0}">+</span>₺<span th:text="${#numbers.formatDecimal(pnl.profitTry.doubleValue() < 0 ? -pnl.profitTry.doubleValue() : pnl.profitTry.doubleValue(), 1, 'COMMA', 0, 'POINT')}">0</span>
+                                <span th:if="${pnl.profitTry.doubleValue() >= 0}">+</span>₺<span th:text="${#numbers.formatDecimal(pnl.profitTry.doubleValue() < 0 ? -pnl.profitTry.doubleValue() : pnl.profitTry.doubleValue(), 1, 'POINT', 0, 'COMMA')}">0</span>
                             </div>
                         </div>
                     </div>
@@ -180,7 +180,7 @@
                 </div>
                 <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1rem; text-align:center;">
                     <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase;">Toplam Borç</div>
-                    <div style="font-family:'Outfit',sans-serif; font-weight:700; font-size:1.5rem; color:#ef4444;">₺<span th:text="${#numbers.formatDecimal(totalDebt, 1, 'COMMA', 0, 'POINT')}">0</span></div>
+                    <div style="font-family:'Outfit',sans-serif; font-weight:700; font-size:1.5rem; color:#ef4444;">₺<span th:text="${#numbers.formatDecimal(totalDebt, 1, 'POINT', 0, 'COMMA')}">0</span></div>
                 </div>
                 <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1rem; text-align:center;">
                     <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase;">Toplam Kredi</div>
@@ -200,12 +200,12 @@
                             <div style="font-size:0.75rem; color:var(--text-muted);">
                                 <span th:text="${loan.referenceNo}">REF</span> ·
                                 <span th:text="${loan.termMonths}">36</span> ay ·
-                                Taksit: ₺<span th:text="${#numbers.formatDecimal(loan.monthlyPayment, 1, 'COMMA', 0, 'POINT')}">0</span>
+                                Taksit: ₺<span th:text="${#numbers.formatDecimal(loan.monthlyPayment, 1, 'POINT', 0, 'COMMA')}">0</span>
                             </div>
                         </div>
                     </div>
                     <div style="text-align:right;">
-                        <div style="font-family:'Outfit',sans-serif; font-weight:700; color:var(--text);">₺<span th:text="${#numbers.formatDecimal(loan.principalAmount, 1, 'COMMA', 0, 'POINT')}">0</span></div>
+                        <div style="font-family:'Outfit',sans-serif; font-weight:700; color:var(--text);">₺<span th:text="${#numbers.formatDecimal(loan.principalAmount, 1, 'POINT', 0, 'COMMA')}">0</span></div>
                         <div style="display:flex; align-items:center; gap:0.5rem; justify-content:flex-end;">
                             <div style="flex:1; max-width:80px; height:5px; background:var(--surface-alt); border-radius:3px; overflow:hidden;">
                                 <div th:style="'height:100%;border-radius:3px;background:' + (${loan.status == 'TAMAMLANDI'} ? '#10b981' : '#c9a84c') + ';width:' + ${loan.progressPercent} + '%;'"></div>
@@ -241,7 +241,7 @@
                         <tr th:each="entry : ${spendingInsights}" style="border-bottom: 1px solid var(--border);">
                             <td style="padding: 0.75rem 0;" th:text="${entry.key}">Kategori</td>
                             <td style="padding: 0.75rem 0; text-align: right; font-weight: 600;">
-                                <span th:text="${#numbers.formatDecimal(entry.value, 1, 'COMMA', 2, 'POINT')}">0.00</span> ₺
+                                <span th:text="${#numbers.formatDecimal(entry.value, 1, 'POINT', 2, 'COMMA')}">0.00</span> ₺
                             </td>
                         </tr>
                     </tbody>
@@ -301,7 +301,7 @@
                      th:classappend="${tx.senderAccount.user.id == user.id} ? 'amount-out' : 'amount-in'">
                     <span th:text="${tx.senderAccount.user.id == user.id} ? '-' : '+'"></span>
                     <span>₺</span>
-                    <span th:text="${#numbers.formatDecimal(tx.amount, 1, 'COMMA', 2, 'POINT')}">0,00</span>
+                    <span th:text="${#numbers.formatDecimal(tx.amount, 1, 'POINT', 2, 'COMMA')}">0,00</span>
                 </div>
                 <!-- V5: Dekont Linki -->
                 <div style="margin-left: 10px;">

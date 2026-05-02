@@ -118,7 +118,7 @@
                             <option value="">Hesap seçiniz...</option>
                             <option th:each="account : ${accounts}"
                                     th:value="${account.id}"
-                                    th:text="${account.accountType + ' - ' + account.formattedIban + ' (₺' + #numbers.formatDecimal(account.balance, 1, 'COMMA', 2, 'POINT') + ')'}">
+                                    th:text="${account.accountType + ' - ' + account.formattedIban + ' (₺' + #numbers.formatDecimal(account.balance, 1, 'POINT', 2, 'COMMA') + ')'}">
                             </option>
                         </select>
                     </div>
@@ -158,7 +158,7 @@
             <h2>📋 Mevcut Kredilerim</h2>
             <span th:if="${totalDebt.compareTo(T(java.math.BigDecimal).ZERO) > 0}" 
                   style="font-size:0.9rem; color:var(--error); font-weight:600;">
-                Toplam Borç: ₺<span th:text="${#numbers.formatDecimal(totalDebt, 1, 'COMMA', 2, 'POINT')}">0</span>
+                Toplam Borç: ₺<span th:text="${#numbers.formatDecimal(totalDebt, 1, 'POINT', 2, 'COMMA')}">0</span>
             </span>
         </div>
 
@@ -179,7 +179,7 @@
 
                 <!-- Tutar -->
                 <div class="account-balance">
-                    <span class="currency-sm">₺</span><span th:text="${#numbers.formatDecimal(loan.principalAmount, 1, 'COMMA', 2, 'POINT')}">0</span>
+                    <span class="currency-sm">₺</span><span th:text="${#numbers.formatDecimal(loan.principalAmount, 1, 'POINT', 2, 'COMMA')}">0</span>
                 </div>
 
                 <!-- İlerleme Çubuğu -->
@@ -193,12 +193,12 @@
                 <div class="account-details" style="gap:0.4rem;">
                     <div class="account-detail">
                         <span class="detail-label">Aylık Taksit</span>
-                        <span class="detail-value" style="color:var(--gold); font-weight:700;">₺<span th:text="${#numbers.formatDecimal(loan.monthlyPayment, 1, 'COMMA', 2, 'POINT')}">0</span></span>
+                        <span class="detail-value" style="color:var(--gold); font-weight:700;">₺<span th:text="${#numbers.formatDecimal(loan.monthlyPayment, 1, 'POINT', 2, 'COMMA')}">0</span></span>
                     </div>
                     <div class="account-detail">
                         <span class="detail-label">Kalan Borç</span>
                         <span class="detail-value" th:style="${loan.remainingAmount.compareTo(T(java.math.BigDecimal).ZERO) > 0 ? 'color:var(--error);font-weight:700;' : 'color:var(--success);font-weight:700;'}">
-                            ₺<span th:text="${#numbers.formatDecimal(loan.remainingAmount, 1, 'COMMA', 2, 'POINT')}">0</span>
+                            ₺<span th:text="${#numbers.formatDecimal(loan.remainingAmount, 1, 'POINT', 2, 'COMMA')}">0</span>
                         </span>
                     </div>
                     <div class="account-detail">

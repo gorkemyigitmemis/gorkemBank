@@ -94,14 +94,16 @@ public class AnalyticsController {
         BigDecimal totalPortfolioCost = BigDecimal.ZERO;
         List<Map<String, Object>> assetBreakdown = new ArrayList<>();
 
+        Map<String, double[]> liveStocks = exchangeRateService.getLiveStocks();
+
         for (Object[] row : portfolioRepository.getAggregatedByCurrency()) {
             String currency = (String) row[0];
             BigDecimal totalAmount = (BigDecimal) row[1];
             BigDecimal totalCost = row[2] != null ? (BigDecimal) row[2] : BigDecimal.ZERO;
 
             Double rate = sellRates.get(currency);
-            if (rate == null && STOCKS.containsKey(currency)) {
-                rate = STOCKS.get(currency)[0];
+            if (rate == null && liveStocks.containsKey(currency)) {
+                rate = liveStocks.get(currency)[0];
             }
 
             if (rate != null) {
@@ -114,7 +116,7 @@ public class AnalyticsController {
                 asset.put("totalAmount", totalAmount);
                 asset.put("currentValue", currentValue);
                 asset.put("totalCost", totalCost);
-                asset.put("isStock", STOCKS.containsKey(currency));
+                asset.put("isStock", liveStocks.containsKey(currency));
                 assetBreakdown.add(asset);
             }
         }

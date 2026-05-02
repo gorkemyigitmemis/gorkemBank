@@ -96,7 +96,7 @@
                 <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">GörkemBank Anonim Şirketi tarafından üretilmiştir.</p>
             </div>
 
-            <div class="receipt-amount" th:text="${#numbers.formatDecimal(tx.amount, 1, 'COMMA', 2, 'POINT')} + ' ' + ${tx.currency}">
+            <div class="receipt-amount" th:text="${#numbers.formatDecimal(tx.amount, 1, 'POINT', 2, 'COMMA')} + ' ' + ${tx.currency}">
                 0.00 TRY
             </div>
 

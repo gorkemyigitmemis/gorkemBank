@@ -150,15 +150,15 @@
                             <div class="asset-icon currency-bg">🇺🇸</div>
                             <div class="asset-info">
                                 <h4>Amerikan Doları (USD / TRY)</h4>
-                                <div class="asset-rates-inline">Alış: <strong th:text="${#numbers.formatDecimal(sellRates.get('USD'), 1, 'COMMA', 4, 'POINT')}">0</strong> | Satış: <strong th:text="${#numbers.formatDecimal(buyRates.get('USD'), 1, 'COMMA', 4, 'POINT')}">0</strong></div>
+                                <div class="asset-rates-inline">Alış: <strong th:text="${#numbers.formatDecimal(sellRates.get('USD'), 1, 'POINT', 4, 'COMMA')}">0</strong> | Satış: <strong th:text="${#numbers.formatDecimal(buyRates.get('USD'), 1, 'POINT', 4, 'COMMA')}">0</strong></div>
                             </div>
                         </div>
                         <div class="asset-right">
-                            <div class="asset-price">₺<span th:text="${#numbers.formatDecimal(buyRates.get('USD'), 1, 'COMMA', 4, 'POINT')}">0</span></div>
+                            <div class="asset-price">₺<span th:text="${#numbers.formatDecimal(buyRates.get('USD'), 1, 'POINT', 4, 'COMMA')}">0</span></div>
                         </div>
                     </div>
                     <div class="asset-actions" onclick="event.stopPropagation()">
-                        <div th:if="${portfolioMap.containsKey('USD')}" class="holding-badge">💼 Portföyünüzde: <strong th:text="${#numbers.formatDecimal(portfolioMap.get('USD'), 1, 'COMMA', 2, 'POINT')}">0</strong> USD</div>
+                        <div th:if="${portfolioMap.containsKey('USD')}" class="holding-badge">💼 Portföyünüzde: <strong th:text="${#numbers.formatDecimal(portfolioMap.get('USD'), 1, 'POINT', 2, 'COMMA')}">0</strong> USD</div>
                         <form th:action="@{/doviz/al}" method="post" class="action-form">
                             <div class="action-input-group">
                                 <input type="number" name="amount" min="1" step="0.01" placeholder="İşlem Miktarı (USD)" required class="action-input">
@@ -179,15 +179,15 @@
                             <div class="asset-icon currency-bg">🇪🇺</div>
                             <div class="asset-info">
                                 <h4>Euro (EUR / TRY)</h4>
-                                <div class="asset-rates-inline">Alış: <strong th:text="${#numbers.formatDecimal(sellRates.get('EUR'), 1, 'COMMA', 4, 'POINT')}">0</strong> | Satış: <strong th:text="${#numbers.formatDecimal(buyRates.get('EUR'), 1, 'COMMA', 4, 'POINT')}">0</strong></div>
+                                <div class="asset-rates-inline">Alış: <strong th:text="${#numbers.formatDecimal(sellRates.get('EUR'), 1, 'POINT', 4, 'COMMA')}">0</strong> | Satış: <strong th:text="${#numbers.formatDecimal(buyRates.get('EUR'), 1, 'POINT', 4, 'COMMA')}">0</strong></div>
                             </div>
                         </div>
                         <div class="asset-right">
-                            <div class="asset-price">₺<span th:text="${#numbers.formatDecimal(buyRates.get('EUR'), 1, 'COMMA', 4, 'POINT')}">0</span></div>
+                            <div class="asset-price">₺<span th:text="${#numbers.formatDecimal(buyRates.get('EUR'), 1, 'POINT', 4, 'COMMA')}">0</span></div>
                         </div>
                     </div>
                     <div class="asset-actions" onclick="event.stopPropagation()">
-                        <div th:if="${portfolioMap.containsKey('EUR')}" class="holding-badge">💼 Portföyünüzde: <strong th:text="${#numbers.formatDecimal(portfolioMap.get('EUR'), 1, 'COMMA', 2, 'POINT')}">0</strong> EUR</div>
+                        <div th:if="${portfolioMap.containsKey('EUR')}" class="holding-badge">💼 Portföyünüzde: <strong th:text="${#numbers.formatDecimal(portfolioMap.get('EUR'), 1, 'POINT', 2, 'COMMA')}">0</strong> EUR</div>
                         <form th:action="@{/doviz/al}" method="post" class="action-form">
                             <div class="action-input-group">
                                 <input type="number" name="amount" min="1" step="0.01" placeholder="İşlem Miktarı (EUR)" required class="action-input">
@@ -208,15 +208,15 @@
                             <div class="asset-icon currency-bg">🇬🇧</div>
                             <div class="asset-info">
                                 <h4>İngiliz Sterlini (GBP / TRY)</h4>
-                                <div class="asset-rates-inline">Alış: <strong th:text="${#numbers.formatDecimal(sellRates.get('GBP'), 1, 'COMMA', 4, 'POINT')}">0</strong> | Satış: <strong th:text="${#numbers.formatDecimal(buyRates.get('GBP'), 1, 'COMMA', 4, 'POINT')}">0</strong></div>
+                                <div class="asset-rates-inline">Alış: <strong th:text="${#numbers.formatDecimal(sellRates.get('GBP'), 1, 'POINT', 4, 'COMMA')}">0</strong> | Satış: <strong th:text="${#numbers.formatDecimal(buyRates.get('GBP'), 1, 'POINT', 4, 'COMMA')}">0</strong></div>
                             </div>
                         </div>
                         <div class="asset-right">
-                            <div class="asset-price">₺<span th:text="${#numbers.formatDecimal(buyRates.get('GBP'), 1, 'COMMA', 4, 'POINT')}">0</span></div>
+                            <div class="asset-price">₺<span th:text="${#numbers.formatDecimal(buyRates.get('GBP'), 1, 'POINT', 4, 'COMMA')}">0</span></div>
                         </div>
                     </div>
                     <div class="asset-actions" onclick="event.stopPropagation()">
-                        <div th:if="${portfolioMap.containsKey('GBP')}" class="holding-badge">💼 Portföyünüzde: <strong th:text="${#numbers.formatDecimal(portfolioMap.get('GBP'), 1, 'COMMA', 2, 'POINT')}">0</strong> GBP</div>
+                        <div th:if="${portfolioMap.containsKey('GBP')}" class="holding-badge">💼 Portföyünüzde: <strong th:text="${#numbers.formatDecimal(portfolioMap.get('GBP'), 1, 'POINT', 2, 'COMMA')}">0</strong> GBP</div>
                         <form th:action="@{/doviz/al}" method="post" class="action-form">
                             <div class="action-input-group">
                                 <input type="number" name="amount" min="1" step="0.01" placeholder="İşlem Miktarı (GBP)" required class="action-input">
@@ -237,15 +237,15 @@
                             <div class="asset-icon currency-bg">🇨🇭</div>
                             <div class="asset-info">
                                 <h4>İsviçre Frangı (CHF / TRY)</h4>
-                                <div class="asset-rates-inline">Alış: <strong th:text="${#numbers.formatDecimal(sellRates.get('CHF'), 1, 'COMMA', 4, 'POINT')}">0</strong> | Satış: <strong th:text="${#numbers.formatDecimal(buyRates.get('CHF'), 1, 'COMMA', 4, 'POINT')}">0</strong></div>
+                                <div class="asset-rates-inline">Alış: <strong th:text="${#numbers.formatDecimal(sellRates.get('CHF'), 1, 'POINT', 4, 'COMMA')}">0</strong> | Satış: <strong th:text="${#numbers.formatDecimal(buyRates.get('CHF'), 1, 'POINT', 4, 'COMMA')}">0</strong></div>
                             </div>
                         </div>
                         <div class="asset-right">
-                            <div class="asset-price">₺<span th:text="${#numbers.formatDecimal(buyRates.get('CHF'), 1, 'COMMA', 4, 'POINT')}">0</span></div>
+                            <div class="asset-price">₺<span th:text="${#numbers.formatDecimal(buyRates.get('CHF'), 1, 'POINT', 4, 'COMMA')}">0</span></div>
                         </div>
                     </div>
                     <div class="asset-actions" onclick="event.stopPropagation()">
-                        <div th:if="${portfolioMap.containsKey('CHF')}" class="holding-badge">💼 Portföyünüzde: <strong th:text="${#numbers.formatDecimal(portfolioMap.get('CHF'), 1, 'COMMA', 2, 'POINT')}">0</strong> CHF</div>
+                        <div th:if="${portfolioMap.containsKey('CHF')}" class="holding-badge">💼 Portföyünüzde: <strong th:text="${#numbers.formatDecimal(portfolioMap.get('CHF'), 1, 'POINT', 2, 'COMMA')}">0</strong> CHF</div>
                         <form th:action="@{/doviz/al}" method="post" class="action-form">
                             <div class="action-input-group">
                                 <input type="number" name="amount" min="1" step="0.01" placeholder="İşlem Miktarı (CHF)" required class="action-input">
@@ -266,15 +266,15 @@
                             <div class="asset-icon gold-bg">🥇</div>
                             <div class="asset-info">
                                 <h4>Gram Altın (Gr)</h4>
-                                <div class="asset-rates-inline">Alış: <strong th:text="${#numbers.formatDecimal(sellRates.get('XAU'), 1, 'COMMA', 2, 'POINT')}">0</strong> | Satış: <strong th:text="${#numbers.formatDecimal(buyRates.get('XAU'), 1, 'COMMA', 2, 'POINT')}">0</strong></div>
+                                <div class="asset-rates-inline">Alış: <strong th:text="${#numbers.formatDecimal(sellRates.get('XAU'), 1, 'POINT', 2, 'COMMA')}">0</strong> | Satış: <strong th:text="${#numbers.formatDecimal(buyRates.get('XAU'), 1, 'POINT', 2, 'COMMA')}">0</strong></div>
                             </div>
                         </div>
                         <div class="asset-right">
-                            <div class="asset-price">₺<span th:text="${#numbers.formatDecimal(buyRates.get('XAU'), 1, 'COMMA', 2, 'POINT')}">0</span></div>
+                            <div class="asset-price">₺<span th:text="${#numbers.formatDecimal(buyRates.get('XAU'), 1, 'POINT', 2, 'COMMA')}">0</span></div>
                         </div>
                     </div>
                     <div class="asset-actions" onclick="event.stopPropagation()">
-                        <div th:if="${portfolioMap.containsKey('XAU')}" class="holding-badge" style="color:#f59e0b;">🥇 Portföyünüzde: <strong th:text="${#numbers.formatDecimal(portfolioMap.get('XAU'), 1, 'COMMA', 2, 'POINT')}">0</strong> gr Altın</div>
+                        <div th:if="${portfolioMap.containsKey('XAU')}" class="holding-badge" style="color:#f59e0b;">🥇 Portföyünüzde: <strong th:text="${#numbers.formatDecimal(portfolioMap.get('XAU'), 1, 'POINT', 2, 'COMMA')}">0</strong> gr Altın</div>
                         <form th:action="@{/doviz/al}" method="post" class="action-form">
                             <div class="action-input-group">
                                 <input type="number" name="amount" min="0.01" step="0.01" placeholder="Miktar (Gram)" required class="action-input">
@@ -295,15 +295,15 @@
                             <div class="asset-icon silver-bg">🥈</div>
                             <div class="asset-info">
                                 <h4>Gram Gümüş (Gr)</h4>
-                                <div class="asset-rates-inline">Alış: <strong th:text="${#numbers.formatDecimal(sellRates.get('XAG'), 1, 'COMMA', 2, 'POINT')}">0</strong> | Satış: <strong th:text="${#numbers.formatDecimal(buyRates.get('XAG'), 1, 'COMMA', 2, 'POINT')}">0</strong></div>
+                                <div class="asset-rates-inline">Alış: <strong th:text="${#numbers.formatDecimal(sellRates.get('XAG'), 1, 'POINT', 2, 'COMMA')}">0</strong> | Satış: <strong th:text="${#numbers.formatDecimal(buyRates.get('XAG'), 1, 'POINT', 2, 'COMMA')}">0</strong></div>
                             </div>
                         </div>
                         <div class="asset-right">
-                            <div class="asset-price">₺<span th:text="${#numbers.formatDecimal(buyRates.get('XAG'), 1, 'COMMA', 2, 'POINT')}">0</span></div>
+                            <div class="asset-price">₺<span th:text="${#numbers.formatDecimal(buyRates.get('XAG'), 1, 'POINT', 2, 'COMMA')}">0</span></div>
                         </div>
                     </div>
                     <div class="asset-actions" onclick="event.stopPropagation()">
-                        <div th:if="${portfolioMap.containsKey('XAG')}" class="holding-badge" style="color:#94a3b8;">🥈 Portföyünüzde: <strong th:text="${#numbers.formatDecimal(portfolioMap.get('XAG'), 1, 'COMMA', 2, 'POINT')}">0</strong> gr Gümüş</div>
+                        <div th:if="${portfolioMap.containsKey('XAG')}" class="holding-badge" style="color:#94a3b8;">🥈 Portföyünüzde: <strong th:text="${#numbers.formatDecimal(portfolioMap.get('XAG'), 1, 'POINT', 2, 'COMMA')}">0</strong> gr Gümüş</div>
                         <form th:action="@{/doviz/al}" method="post" class="action-form">
                             <div class="action-input-group">
                                 <input type="number" name="amount" min="0.01" step="0.01" placeholder="Miktar (Gram)" required class="action-input">
@@ -337,16 +337,16 @@
                         </div>
                     </div>
                     <div class="asset-right">
-                        <div class="asset-price">₺<span th:text="${#numbers.formatDecimal(stock.value[0], 1, 'COMMA', 2, 'POINT')}">0</span></div>
+                        <div class="asset-price">₺<span th:text="${#numbers.formatDecimal(stock.value[0], 1, 'POINT', 2, 'COMMA')}">0</span></div>
                         <div th:class="${stock.value[1] ge 0 ? 'asset-change asset-up' : 'asset-change asset-down'}">
                             <span th:if="${stock.value[1] ge 0}">▲</span><span th:if="${stock.value[1] lt 0}">▼</span>
-                            <span th:text="${'%' + #numbers.formatDecimal((stock.value[1] lt 0 ? -stock.value[1] : stock.value[1]), 1, 'COMMA', 2, 'POINT')}">0%</span>
+                            <span th:text="${'%' + #numbers.formatDecimal((stock.value[1] lt 0 ? -stock.value[1] : stock.value[1]), 1, 'POINT', 2, 'COMMA')}">0%</span>
                         </div>
                     </div>
                 </div>
                 
                 <div class="asset-actions" onclick="event.stopPropagation()">
-                    <div th:if="${portfolioMap.containsKey(stock.key)}" class="holding-badge">📊 Portföyünüzde: <strong th:text="${#numbers.formatDecimal(portfolioMap.get(stock.key), 1, 'COMMA', 0, 'POINT')}">0</strong> lot <span th:text="${stock.key}"></span></div>
+                    <div th:if="${portfolioMap.containsKey(stock.key)}" class="holding-badge">📊 Portföyünüzde: <strong th:text="${#numbers.formatDecimal(portfolioMap.get(stock.key), 1, 'POINT', 0, 'COMMA')}">0</strong> lot <span th:text="${stock.key}"></span></div>
                     <form th:action="@{/borsa/hisse/al}" method="post" class="action-form">
                         <div class="action-input-group">
                             <input type="number" name="amount" min="1" step="1" placeholder="Miktar (Lot)" required class="action-input">
@@ -367,7 +367,7 @@
                 <h2 style="font-size:1.1rem; color:var(--text);">💼 Portföyüm</h2>
                 <span style="font-size:0.9rem; color:var(--gold); font-weight:700;"
                       th:if="${portfolioTotalTry != null and portfolioTotalTry gt 0}">
-                    Toplam: ₺<span th:text="${#numbers.formatDecimal(portfolioTotalTry, 1, 'COMMA', 2, 'POINT')}">0</span>
+                    Toplam: ₺<span th:text="${#numbers.formatDecimal(portfolioTotalTry, 1, 'POINT', 2, 'COMMA')}">0</span>
                 </span>
             </div>
 
@@ -387,7 +387,7 @@
                             <span th:style="'padding:4px 12px; border-radius:12px; font-size:0.85rem; font-weight:700;' + (${pnl.profitTry ge 0} ? 'background:rgba(16,185,129,0.12);color:#059669;' : 'background:rgba(239,68,68,0.12);color:#dc2626;')">
                                 <span th:if="${pnl.profitTry ge 0}">▲</span>
                                 <span th:if="${pnl.profitTry lt 0}">▼</span>
-                                %<span th:text="${#numbers.formatDecimal(pnl.profitPct lt 0 ? -pnl.profitPct : pnl.profitPct, 1, 'COMMA', 2, 'POINT')}">0</span>
+                                %<span th:text="${#numbers.formatDecimal(pnl.profitPct lt 0 ? -pnl.profitPct : pnl.profitPct, 1, 'POINT', 2, 'COMMA')}">0</span>
                             </span>
                         </div>
                         <!-- Alt: detaylar grid -->
@@ -395,27 +395,27 @@
                             <div style="text-align:center; background:var(--surface-alt); padding:0.5rem 0.25rem; border-radius:6px;">
                                 <div style="color:var(--text-muted); font-size:0.65rem; text-transform:uppercase;">Miktar</div>
                                 <div style="font-weight:700; color:var(--text);">
-                                    <span th:if="${pnl.isStock}" th:text="${#numbers.formatDecimal(pnl.amount, 1, 'COMMA', 0, 'POINT')}">0</span>
-                                    <span th:if="${!pnl.isStock}" th:text="${#numbers.formatDecimal(pnl.amount, 1, 'COMMA', 2, 'POINT')}">0</span>
+                                    <span th:if="${pnl.isStock}" th:text="${#numbers.formatDecimal(pnl.amount, 1, 'POINT', 0, 'COMMA')}">0</span>
+                                    <span th:if="${!pnl.isStock}" th:text="${#numbers.formatDecimal(pnl.amount, 1, 'POINT', 2, 'COMMA')}">0</span>
                                     <span style="font-size:0.6rem; color:var(--text-muted);" th:if="${pnl.isStock}"> lot</span>
                                 </div>
                             </div>
                             <div style="text-align:center; background:var(--surface-alt); padding:0.5rem 0.25rem; border-radius:6px;">
                                 <div style="color:var(--text-muted); font-size:0.65rem; text-transform:uppercase;">Ort. Alış</div>
-                                <div style="font-weight:600; color:var(--text);">₺<span th:text="${#numbers.formatDecimal(pnl.avgBuyRate, 1, 'COMMA', 2, 'POINT')}">0</span></div>
+                                <div style="font-weight:600; color:var(--text);">₺<span th:text="${#numbers.formatDecimal(pnl.avgBuyRate, 1, 'POINT', 2, 'COMMA')}">0</span></div>
                             </div>
                             <div style="text-align:center; background:var(--surface-alt); padding:0.5rem 0.25rem; border-radius:6px;">
                                 <div style="color:var(--text-muted); font-size:0.65rem; text-transform:uppercase;">Maliyet</div>
-                                <div style="font-weight:600; color:var(--text);">₺<span th:text="${#numbers.formatDecimal(pnl.totalCost, 1, 'COMMA', 0, 'POINT')}">0</span></div>
+                                <div style="font-weight:600; color:var(--text);">₺<span th:text="${#numbers.formatDecimal(pnl.totalCost, 1, 'POINT', 0, 'COMMA')}">0</span></div>
                             </div>
                             <div style="text-align:center; background:var(--surface-alt); padding:0.5rem 0.25rem; border-radius:6px;">
                                 <div style="color:var(--text-muted); font-size:0.65rem; text-transform:uppercase;">Güncel Değer</div>
-                                <div style="font-weight:700; color:var(--text);">₺<span th:text="${#numbers.formatDecimal(pnl.currentValue, 1, 'COMMA', 0, 'POINT')}">0</span></div>
+                                <div style="font-weight:700; color:var(--text);">₺<span th:text="${#numbers.formatDecimal(pnl.currentValue, 1, 'POINT', 0, 'COMMA')}">0</span></div>
                             </div>
                             <div style="text-align:center; background:var(--surface-alt); padding:0.5rem 0.25rem; border-radius:6px;">
                                 <div style="color:var(--text-muted); font-size:0.65rem; text-transform:uppercase;">Kâr / Zarar</div>
                                 <div th:style="'font-weight:700;' + (${pnl.profitTry ge 0} ? 'color:#059669;' : 'color:#dc2626;')">
-                                    <span th:if="${pnl.profitTry ge 0}">+</span>₺<span th:text="${#numbers.formatDecimal(pnl.profitTry lt 0 ? -pnl.profitTry : pnl.profitTry, 1, 'COMMA', 0, 'POINT')}">0</span>
+                                    <span th:if="${pnl.profitTry ge 0}">+</span>₺<span th:text="${#numbers.formatDecimal(pnl.profitTry lt 0 ? -pnl.profitTry : pnl.profitTry, 1, 'POINT', 0, 'COMMA')}">0</span>
                                 </div>
                             </div>
                         </div>

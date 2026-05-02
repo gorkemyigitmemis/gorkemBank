@@ -146,4 +146,76 @@ public class ExchangeRateService {
         }
         return sellRates;
     }
+
+    private Map<String, double[]> cachedStocks = new LinkedHashMap<>();
+    private LocalDateTime lastStockFetchTime = null;
+
+    /**
+     * Yahoo Finance API'den canlı borsa hisse kurlarını döndürür.
+     */
+    public Map<String, double[]> getLiveStocks() {
+        if (lastStockFetchTime != null && cachedStocks != null && !cachedStocks.isEmpty()
+                && lastStockFetchTime.plusMinutes(CACHE_MINUTES).isAfter(LocalDateTime.now())) {
+            return cachedStocks;
+        }
+        try {
+            Map<String, double[]> stocks = new LinkedHashMap<>();
+            String[] symbols = {"THYAO", "ASELS", "BIMAS", "SASA", "EREGL", "KCHOL", "GARAN", "AKBNK", "TUPRS", "TCELL"};
+            for (String sym : symbols) {
+                stocks.put(sym, fetchStockRate(sym + ".IS"));
+            }
+            cachedStocks = stocks;
+            lastStockFetchTime = LocalDateTime.now();
+            System.out.println("📈 Borsa kurları güncellendi: " + stocks.keySet());
+            return stocks;
+        } catch (Exception e) {
+            System.err.println("⚠️ Borsa API hatası: " + e.getMessage());
+            if (cachedStocks != null && !cachedStocks.isEmpty()) return cachedStocks;
+            return getDefaultStocks();
+        }
+    }
+
+    private double[] fetchStockRate(String symbol) throws Exception {
+        String apiUrl = "https://query1.finance.yahoo.com/v8/finance/chart/" + symbol;
+        URL url = new URL(apiUrl);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+        conn.setConnectTimeout(5000);
+        conn.setReadTimeout(5000);
+        conn.setRequestProperty("User-Agent", "Mozilla/5.0"); // Yahoo Finance sometimes blocks without UA
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        StringBuilder response = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) response.append(line);
+        reader.close();
+
+        String json = response.toString();
+        // Basit JSON parse: regularMarketPrice
+        String priceKey = "\"regularMarketPrice\":";
+        int pIndex = json.indexOf(priceKey) + priceKey.length();
+        int pEnd = json.indexOf(",", pIndex);
+        double price = Double.parseDouble(json.substring(pIndex, pEnd).trim());
+
+        // previousClose
+        String prevKey = "\"previousClose\":";
+        int prIndex = json.indexOf(prevKey) + prevKey.length();
+        int prEnd = json.indexOf(",", prIndex);
+        double prev = Double.parseDouble(json.substring(prIndex, prEnd).trim());
+
+        double change = ((price - prev) / prev) * 100;
+        change = Math.round(change * 100.0) / 100.0;
+
+        return new double[]{price, change, prev};
+    }
+
+    private Map<String, double[]> getDefaultStocks() {
+        Map<String, double[]> map = new LinkedHashMap<>();
+        map.put("THYAO", new double[]{319.50, 2.14, 312.80});
+        map.put("ASELS", new double[]{89.35, -1.20, 90.43});
+        map.put("BIMAS", new double[]{178.90, 0.50, 178.01});
+        map.put("KCHOL", new double[]{198.40, 3.10, 192.44});
+        map.put("GARAN", new double[]{142.30, -0.80, 143.44});
+        return map;
+    }
 }

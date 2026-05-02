@@ -4,7 +4,7 @@
 
   ![Java](https://img.shields.io/badge/Java-21-orange?style=for-the-badge&logo=openjdk)
   ![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.4.1-6DB33F?style=for-the-badge&logo=spring)
-  ![H2 Database](https://img.shields.io/badge/H2-Database-4479A1?style=for-the-badge&logo=sqlite)
+  ![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql)
   ![Thymeleaf](https://img.shields.io/badge/Thymeleaf-HTML5-005C0F?style=for-the-badge&logo=thymeleaf)
   ![Chart.js](https://img.shields.io/badge/Chart.js-4.x-FF6384?style=for-the-badge&logo=chartdotjs)
   ![Spring Security](https://img.shields.io/badge/Spring_Security-6.x-6DB33F?style=for-the-badge&logo=springsecurity)
@@ -14,88 +14,77 @@
 
 ## 📌 Proje Hakkında
 
-**GörkemBank**, gerçek bankacılık iş akışlarını simüle eden kapsamlı bir **Spring Boot** web uygulamasıdır. Kullanıcı yönetimi, para transferleri, kredi sistemleri, borsa & döviz alım-satım, portföy takibi ve detaylı admin analitik paneli gibi birçok modülü tek çatı altında toplar.
+**GörkemBank**, gerçek dünya bankacılık iş akışlarını uçtan uca simüle eden kapsamlı bir **Spring Boot** web uygulamasıdır. Kullanıcı yönetimi, para transferleri, kredi sistemleri, **canlı** borsa & döviz alım-satımı, detaylı portföy (Kâr/Zarar) takibi ve gelişmiş admin analitik paneli gibi birçok modülü tek çatı altında toplar.
 
-Proje, ilk başlatıldığında **150+ kullanıcı, 1.500+ transfer, 40+ kredi, 50+ portföy pozisyonu** ve binlerce aktivite logunu otomatik olarak oluşturarak gerçekçi bir test ortamı sunar.
+Proje, ilk başlatıldığında **150+ kullanıcı, 1.500+ transfer, 40+ kredi, 150+ portföy pozisyonu** ve binlerce aktivite logunu otomatik olarak MySQL veritabanına ekleyerek gerçekçi bir test ve analiz ortamı sunar.
 
 ---
 
 ## 🚀 Öne Çıkan Özellikler
 
-### 🔐 Gelişmiş Güvenlik (Spring Security)
-- BCrypt ile şifrelenmiş parolalar
-- Rol tabanlı yetkilendirme (`USER` ve `ADMIN`)
-- CSRF korumalı formlar ve güvenli oturum yönetimi
-- Giriş/çıkış aktivitelerinin tam loglama kaydı
-
-### 💸 Hesap & Transfer Yönetimi
-- **Vadesiz ve Vadeli** hesap tipleri
-- Hesaplar arası anlık **Havale/EFT** transferleri
-- ACID uyumlu işlem kayıtları ve bakiye doğrulama
-- **Dijital Dekont Sistemi:** Her işlem için antetli, mühürlü ve yazdırılabilir dekontlar
-
-### 💳 Kredi Sistemi
-- **İhtiyaç, Konut ve Taşıt** kredisi türleri
-- Otomatik faiz hesaplama ve aylık taksit planı oluşturma
-- Kredi başvurusu, onay süreci ve ödeme takibi
-- İlerleme çubuğuyla kredi geri ödeme durumu görüntüleme
-- Dashboard'da aktif kredi sayısı, toplam borç ve tüm kredi geçmişi
-
-### 📈 Borsa & Hisse Senedi İşlemleri
+### 📈 Canlı Borsa & Hisse Senedi İşlemleri (Yahoo Finance API)
 - **10 farklı BIST hissesi:** THYAO, ASELS, BİMAS, SASA, EREGL, KCHOL, GARAN, AKBNK, TÜPRAŞ, TCELL
-- Gerçek zamanlı fiyat simülasyonu ve günlük değişim yüzdeleri
-- Lot bazında hisse alım-satım işlemleri
-- Otomatik bakiye kontrolü ve portföy güncelleme
+- **Yahoo Finance API** üzerinden **gerçek zamanlı (anlık)** borsa fiyatları çekilir.
+- Lot bazında hisse alım-satım işlemleri.
+- Otomatik bakiye kontrolü ve anlık piyasa dalgalanmalarına göre portföy (kâr/zarar) güncellemesi.
 
-### 💱 Döviz & Altın Alım-Satım
+### 💱 Döviz & Altın Alım-Satım (Avrupa Merkez Bankası)
 - **Frankfurter API** üzerinden canlı döviz kurları (USD, EUR, GBP, CHF, JPY, CNY)
-- Banka alış/satış makas (spread) algoritması
-- Altın (XAU) ve Gümüş (XAG) emtia işlemleri
-- Portföye ekleme ve anlık TL değerleme
+- Banka alış/satış makas (spread) algoritması ve anlık kur dönüştürücü.
+- Gram Altın (XAU) ve Gümüş (XAG) emtia işlemleri.
+- Portföye ekleme ve Türkiye standartlarında (nokta/virgül formatlı) anlık TL değerleme.
 
 ### 📊 Portföy Kâr/Zarar Takibi
-- **Ağırlıklı ortalama maliyet** yöntemiyle alış fiyatı takibi
-- Her varlık için anlık **kâr/zarar yüzdesi** ve **TL tutarı**
-- Yeşil (kâr) / Kırmızı (zarar) görsel göstergeler
-- Miktar, maliyet ve güncel değer detayları
+- **Ağırlıklı ortalama maliyet** yöntemiyle alış fiyatı takibi.
+- Her varlık için anlık piyasa fiyatına dayalı **kâr/zarar yüzdesi** ve **TL tutarı**.
+- Yeşil (kâr) / Kırmızı (zarar) görsel göstergeler, toplam portföy analizi.
 
-### 🔄 Otomatik Ödeme Talimatları
-- Elektrik, internet, doğalgaz gibi düzenli fatura ödemeleri
-- Otomatik ödeme oluşturma, düzenleme ve iptal etme
+### 🔐 Gelişmiş Güvenlik (Spring Security)
+- BCrypt ile şifrelenmiş parolalar.
+- Rol tabanlı yetkilendirme (`USER` ve `ADMIN`).
+- CSRF korumalı formlar ve güvenli oturum yönetimi.
+- Giriş/çıkış ve kritik eylemlerin IP ve Cihaz tespiti ile tam loglama kaydı.
+
+### 💸 Hesap & Transfer Yönetimi
+- **Vadesiz ve Vadeli** hesap tipleri.
+- Hesaplar arası anlık **Havale/EFT** transferleri.
+- ACID uyumlu işlem kayıtları ve bakiye doğrulama.
+- **Dijital Dekont Sistemi:** Her işlem için PDF formatında antetli, mühürlü ve yazdırılabilir dekontlar.
+
+### 💳 Kredi Sistemi
+- **İhtiyaç, Konut ve Taşıt** kredisi türleri.
+- Otomatik faiz hesaplama ve aylık taksit planı (Amortisman) oluşturma.
+- Kredi başvurusu, onay süreci ve Dashboard üzerinden anlık borç kapama.
+
+### 🔄 Fatura & Otomatik Ödeme Talimatları
+- Elektrik, internet, doğalgaz gibi düzenli fatura ödemeleri.
+- Otomatik ödeme talimatı oluşturma, yönetme ve iptal etme.
 
 ### 📈 Harcama Analizi
-- İşlem açıklamalarından otomatik kategori tespiti (Kira, Market, Fatura, Maaş vb.)
-- Chart.js ile interaktif **Donut Grafik** ile harcama dağılımı
-
-### 🚨 Şüpheli İşlem Radarı (AML)
-- Anormal işlem hacmi tespit eden **Anti Money Laundering** sistemi
-- JPQL GROUP BY + HAVING ile milisaniye içinde risk tespiti
+- İşlem açıklamalarından otomatik kategori tespiti (Kira, Market, Fatura, Maaş vb.).
+- Chart.js ile interaktif **Donut Grafik** ile harcama dağılımı.
 
 ---
 
 ## 🛡️ Admin Analitik Dashboard
 
-Admin hesabıyla giriş yapıldığında erişilen kapsamlı veri analitik paneli:
+Admin hesabıyla giriş yapıldığında erişilen kapsamlı veri bilimsel analiz paneli:
 
 ### 🏦 Banka Finansal Özet
 | Metrik | Açıklama |
 |:---|:---|
-| 💳 Kredi Kullanan | Banka genelinde kredi çeken benzersiz kullanıcı sayısı |
-| 📊 Aktif Kredi Hacmi | Toplam aktif kredi kalan borç tutarı (TL) |
-| 📈 Yatırım Yapan | Borsa/döviz portföyü olan kullanıcı sayısı |
-| 💰 Toplam Portföy | Tüm kullanıcıların toplam portföy değeri (TL) |
-| 🎯 Kampanya Maliyeti | Kampanyalardan kaynaklanan toplam banka zararı |
+| 💳 Kredi Kullanan | Banka genelinde aktif kredisi olan kullanıcı sayısı |
+| 📊 Aktif Kredi Hacmi | Bankanın verdiği toplam kredi ve anapara durumu (TL) |
+| 📈 Yatırım Yapan | Borsa/döviz portföyü olan aktif müşteri sayısı |
+| 💰 Toplam Portföy | Bankada dönen hisse senedi ve dövizlerin toplam anlık hacmi (TL) |
+| 🎯 Kampanya Maliyeti | Düzenlenen kampanyalardan bankanın uğradığı sübvansiyon maliyeti |
 
-### 📊 Grafikler & Tablolar
+### 📊 Grafikler & Tablolar (Chart.js)
 - **Kredi Türü Dağılımı:** İhtiyaç / Konut / Taşıt oranları (Pie Chart)
 - **Kampanya Etkisi Tablosu:** Her kampanyanın yararlanan kişi sayısı ve maliyeti
-- **Portföy Dağılımı:** Banka genelindeki tüm varlıkların (USD, EUR, THYAO vb.) toplam hacmi
-- **Kullanıcı Kayıt Trendi:** Günlük yeni kayıt grafiği
-- **Giriş Trendleri:** Başarılı ve başarısız giriş denemeleri
-- **Saat Bazlı Aktivite:** 24 saat boyunca platform kullanım yoğunluğu
-- **Cihaz Dağılımı:** Masaüstü / Mobil / Tablet oranları
-- **Sayfa Ziyaretleri:** En çok ziyaret edilen sayfalar
-- **Müşteri Segmentasyonu:** İşlem hacmine göre müşteri profilleri
+- **Portföy Dağılımı:** Hangi hisse senedine/dövize daha çok yatırım yapıldığının analizi
+- **Sistem Kullanım İstatistikleri:** Saat bazlı aktivite ısı haritası, cihaz dağılımı, hata oranları
+- **Log Yönetimi:** Tüm kullanıcıların anlık ayak izlerinin incelenmesi
 
 ---
 
@@ -104,10 +93,10 @@ Admin hesabıyla giriş yapıldığında erişilen kapsamlı veri analitik panel
 | Katman | Teknoloji |
 |:---|:---|
 | **Backend** | Java 21, Spring Boot 3.4.1, Spring Security 6, Spring Data JPA |
-| **Veritabanı** | H2 Database (Disk modunda — uygulama kapansa da veri korunur) |
-| **Frontend** | HTML5, Modern CSS (Glassmorphism), Vanilla JavaScript, Thymeleaf |
+| **Veritabanı** | MySQL 8.0, Hibernate ORM |
+| **Frontend** | HTML5, Modern Vanilla CSS (Glassmorphism), JavaScript, Thymeleaf |
 | **Veri Görselleştirme** | Chart.js 4.x |
-| **Döviz API** | Frankfurter API (Canlı kurlar) |
+| **Dış API'ler** | Yahoo Finance (Borsa), Frankfurter API (Döviz) |
 
 ---
 
@@ -115,24 +104,31 @@ Admin hesabıyla giriş yapıldığında erişilen kapsamlı veri analitik panel
 
 ### Gereksinimler
 - **Java 17** veya **Java 21**
-- İnternet bağlantısı (Maven bağımlılıkları + canlı döviz kurları için)
+- **MySQL Server** (XAMPP veya lokal MySQL)
+- İnternet bağlantısı (Canlı döviz ve borsa kurları için)
 
 ### Adımlar
 
-```bash
-# 1. Projeyi klonlayın
-git clone https://github.com/gorkemyigitmemis/gorkemBank.git
-cd gorkemBank
+1. **MySQL Veritabanını Hazırlayın:**
+   MySQL sunucunuzda `gorkembank` adında boş bir şema oluşturun. (Örn: `CREATE DATABASE gorkembank;`)
+   *(Veritabanı kullanıcı adı `root`, şifre ise boş olarak yapılandırılmıştır. `application.properties` dosyasından bu bilgileri kendi sisteminize göre düzenleyebilirsiniz.)*
 
-# 2. Uygulamayı başlatın
-./mvnw spring-boot:run
-# Windows: .\mvnw.cmd spring-boot:run
+2. **Projeyi klonlayın:**
+   ```bash
+   git clone https://github.com/gorkemyigitmemis/gorkemBank.git
+   cd gorkemBank
+   ```
 
-# 3. Tarayıcıyı açın
-# 👉 http://localhost:8080
-```
+3. **Uygulamayı başlatın:**
+   ```bash
+   ./mvnw spring-boot:run
+   # Windows: .\mvnw.cmd spring-boot:run
+   ```
 
-Uygulama ilk başlatıldığında `DataSeeder` otomatik olarak demo verileri oluşturur.
+4. **Tarayıcıyı açın:**
+   👉 http://localhost:8080
+
+*(Not: Uygulama ilk kez başlatıldığında `DataSeeder` sınıfı otomatik olarak MySQL'i sahte ve gerçekçi verilerle doldurur.)*
 
 ---
 
@@ -145,36 +141,6 @@ Uygulama ilk başlatıldığında `DataSeeder` otomatik olarak demo verileri olu
 
 > *Ayrıca **`sifre123`** şifresiyle 150+ rastgele oluşturulmuş kullanıcı profiliyle de giriş yapabilirsiniz!*
 > *(Örn: ali.yilmaz1@email.com / sifre123)*
-
----
-
-## 🧱 Mimari Yaklaşım
-
-- **Katmanlı Mimari (N-Tier):** Repository → Service → Controller katmanları sıkı izolasyonla ayrılmıştır
-- **RESTful JSON API'ler:** Admin grafikleri için asenkron veri endpoint'leri (`/analitik/api/*`)
-- **Data Seeder:** GitHub'dan indiren herkesin anında test edebileceği kapsamlı mock data sistemi
-- **Güvenlik:** Rol bazlı URL koruması, CSRF token, BCrypt şifreleme
-- **Responsive Tasarım:** Mobil uyumlu, Dark Mode destekli modern Glassmorphism arayüz
-
----
-
-## 📁 Proje Yapısı
-
-```
-src/main/java/com/banka/
-├── config/          # SecurityConfig, DataSeeder
-├── controller/      # Dashboard, Exchange, Loan, Analytics, Transfer...
-├── model/           # User, Account, Transaction, Loan, Portfolio...
-├── repository/      # JPA Repository interfaces
-├── service/         # İş mantığı katmanı
-└── filter/          # ActivityLoggingFilter (tüm istekleri loglar)
-
-src/main/resources/
-├── templates/       # Thymeleaf HTML sayfaları
-├── static/css/      # Stil dosyaları
-├── static/js/       # JavaScript dosyaları
-└── application.properties
-```
 
 ---
 

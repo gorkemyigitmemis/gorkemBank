@@ -99,12 +99,14 @@ public class DashboardController {
         BigDecimal portfolioTotalTry = BigDecimal.ZERO;
         List<Map<String, Object>> portfolioPnlList = new ArrayList<>();
 
+        Map<String, double[]> liveStocks = exchangeRateService.getLiveStocks();
+
         for (Portfolio p : portfolios) {
             if (p.getAmount().compareTo(BigDecimal.ZERO) <= 0) continue;
 
             Double currentRate = sellRates.get(p.getCurrency());
-            if (currentRate == null && STOCKS.containsKey(p.getCurrency())) {
-                currentRate = STOCKS.get(p.getCurrency())[0];
+            if (currentRate == null && liveStocks.containsKey(p.getCurrency())) {
+                currentRate = liveStocks.get(p.getCurrency())[0];
             }
             if (currentRate == null) continue;
 
@@ -116,7 +118,7 @@ public class DashboardController {
             pnl.put("amount", p.getAmount());
             pnl.put("currentRate", currentRate);
             pnl.put("currentValue", currentValue.setScale(2, RoundingMode.HALF_UP));
-            pnl.put("isStock", STOCKS.containsKey(p.getCurrency()));
+            pnl.put("isStock", liveStocks.containsKey(p.getCurrency()));
             pnl.put("displayName", STOCK_NAMES.getOrDefault(p.getCurrency(), p.getCurrency()));
 
             BigDecimal avgBuy = p.getAvgBuyRate() != null ? p.getAvgBuyRate() : BigDecimal.ZERO;

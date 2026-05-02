@@ -91,12 +91,14 @@ public class ExchangeController {
         // Kullanıcının mevcut lot/miktar bilgisi (alım-satım formunda göstermek için)
         Map<String, BigDecimal> portfolioMap = new java.util.HashMap<>();
 
+        Map<String, double[]> liveStocks = exchangeRateService.getLiveStocks();
+
         for (Portfolio p : portfolios) {
             if (p.getAmount().compareTo(BigDecimal.ZERO) <= 0) continue;
 
             Double rate = sellRates.get(p.getCurrency());
-            if (rate == null && STOCKS.containsKey(p.getCurrency())) {
-                rate = STOCKS.get(p.getCurrency())[0];
+            if (rate == null && liveStocks.containsKey(p.getCurrency())) {
+                rate = liveStocks.get(p.getCurrency())[0];
             }
             if (rate == null) continue;
 
@@ -139,7 +141,7 @@ public class ExchangeController {
         model.addAttribute("portfolioTotalTry", portfolioTotalTry);
         model.addAttribute("portfolioPnlList", portfolioPnlList);
         model.addAttribute("portfolioMap", portfolioMap);
-        model.addAttribute("stocks", STOCKS);
+        model.addAttribute("stocks", liveStocks);
         model.addAttribute("stockNames", STOCK_NAMES);
 
         return "borsa";
@@ -192,10 +194,11 @@ public class ExchangeController {
                            RedirectAttributes redirectAttributes) {
         try {
             User user = userService.findByEmail(authentication.getName());
-            if (!STOCKS.containsKey(ticker)) throw new RuntimeException("Geçersiz hisse senedi!");
+            Map<String, double[]> liveStocks = exchangeRateService.getLiveStocks();
+            if (!liveStocks.containsKey(ticker)) throw new RuntimeException("Geçersiz hisse senedi!");
             
             // Hisse alış fiyatı (mevcut fiyat)
-            BigDecimal rate = BigDecimal.valueOf(STOCKS.get(ticker)[0]);
+            BigDecimal rate = BigDecimal.valueOf(liveStocks.get(ticker)[0]);
             
             // PortfolioService'i hisse lotları için de kullanabiliriz, miktar lot sayısıdır
             portfolioService.buyCurrency(user, ticker, amountToBuy, rate);
@@ -214,10 +217,11 @@ public class ExchangeController {
                             RedirectAttributes redirectAttributes) {
         try {
             User user = userService.findByEmail(authentication.getName());
-            if (!STOCKS.containsKey(ticker)) throw new RuntimeException("Geçersiz hisse senedi!");
+            Map<String, double[]> liveStocks = exchangeRateService.getLiveStocks();
+            if (!liveStocks.containsKey(ticker)) throw new RuntimeException("Geçersiz hisse senedi!");
             
             // Hisse satış fiyatı (mevcut fiyat)
-            BigDecimal rate = BigDecimal.valueOf(STOCKS.get(ticker)[0]);
+            BigDecimal rate = BigDecimal.valueOf(liveStocks.get(ticker)[0]);
             
             portfolioService.sellCurrency(user, ticker, amountToSell, rate);
             redirectAttributes.addFlashAttribute("successMessage",
