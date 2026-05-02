@@ -28,6 +28,15 @@ public class AdminLogController {
     @Autowired
     private com.banka.repository.UserRepository userRepository;
 
+    @Autowired
+    private com.banka.repository.PortfolioRepository portfolioRepository;
+
+    @Autowired
+    private com.banka.repository.LoanRepository loanRepository;
+
+    @Autowired
+    private com.banka.repository.AutoPaymentRepository autoPaymentRepository;
+
     /**
      * İŞLEM LOGLARI SAYFASI
      * Tüm bankacılık işlemlerini sayfalı ve detaylı şekilde listeler.
@@ -84,6 +93,12 @@ public class AdminLogController {
         model.addAttribute("pageSize", size);
         model.addAttribute("searchQuery", q);
         model.addAttribute("searchedUser", searchedUser);
+
+        if (searchedUser != null) {
+            model.addAttribute("userPortfolios", portfolioRepository.findByUserId(searchedUser.getId()));
+            model.addAttribute("userLoans", loanRepository.findByUserIdOrderByCreatedAtDesc(searchedUser.getId()));
+            model.addAttribute("userAutoPayments", autoPaymentRepository.findByUserIdOrderByCreatedAtDesc(searchedUser.getId()));
+        }
 
         return "admin_logs";
     }

@@ -46,27 +46,122 @@
                 <a th:href="@{/loglar/supheli}" class="btn" style="background: rgba(255, 77, 79, 0.1); color: #ff4d4f; border: 1px solid #ff4d4f; white-space: nowrap;">🚨 Şüpheli IBAN Tara</a>
             </div>
 
-            <!-- Kişi Arama Sonucu Profili -->
-            <div th:if="${searchedUser != null}" class="user-profile-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 2rem; display: flex; flex-wrap: wrap; gap: 2rem; align-items: center;">
-                <div style="display: flex; align-items: center; gap: 1rem;">
-                    <div style="width: 60px; height: 60px; background: var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--primary); font-weight: bold;">
-                        <span th:text="${#strings.substring(searchedUser.ad, 0, 1) + #strings.substring(searchedUser.soyad, 0, 1)}">AB</span>
+            <!-- Detaylı Kullanıcı Profili -->
+            <div th:if="${searchedUser != null}" class="user-profile-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 2rem;">
+                
+                <!-- Üst Kısım: Temel Bilgiler -->
+                <div style="display: flex; flex-wrap: wrap; gap: 2rem; align-items: center; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 1.5rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="width: 70px; height: 70px; background: linear-gradient(135deg, var(--gold), #f59e0b); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: #fff; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+                            <span th:text="${#strings.substring(searchedUser.ad, 0, 1) + #strings.substring(searchedUser.soyad, 0, 1)}">AB</span>
+                        </div>
+                        <div>
+                            <h2 style="margin: 0; font-size: 1.5rem; color: var(--text);" th:text="${searchedUser.ad + ' ' + searchedUser.soyad}">Ad Soyad</h2>
+                            <div style="color: var(--text-muted); font-size: 0.95rem; margin-top:0.2rem;" th:text="${'📧 ' + searchedUser.email}">Email</div>
+                            <div style="color: var(--text-muted); font-size: 0.95rem; margin-top:0.2rem;">
+                                🆔 TC No: <span th:text="${searchedUser.tcKimlik}" style="color:var(--text);"></span>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <h2 style="margin: 0; font-size: 1.25rem; color: var(--text);" th:text="${searchedUser.ad + ' ' + searchedUser.soyad}">Ad Soyad</h2>
-                        <span style="color: var(--text-muted); font-size: 0.9rem;" th:text="${'TC: ' + searchedUser.tcKimlik}">TC No</span>
+
+                    <div style="flex: 1; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
+                        <div style="background: rgba(255,255,255,0.03); padding: 1.2rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                            <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.25rem;">Hesap Bakiyesi</div>
+                            <div style="font-size: 1.4rem; color: var(--gold); font-weight: bold;" th:text="${#numbers.formatDecimal(searchedUser.accounts.get(0).balance, 1, 'COMMA', 2, 'POINT')} + ' ₺'">0.00 ₺</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem; font-family: monospace;" th:text="${searchedUser.accounts.get(0).getFormattedIban()}">TR00...</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.03); padding: 1.2rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                            <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.25rem;">Güvenlik & Parola</div>
+                            <div style="font-size: 0.9rem; color: #ff4d4f; font-weight: bold; word-break: break-all; font-family: monospace; line-height: 1.3;" th:text="${searchedUser.passwordHash}">Hash...</div>
+                            <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.3rem;">(Sistemde şifrelenmiş tutulur)</div>
+                        </div>
                     </div>
                 </div>
 
-                <div style="flex: 1; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-                    <div style="background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 8px;">
-                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.25rem;">Toplam Bakiye (TRY)</div>
-                        <div style="font-size: 1.25rem; color: var(--gold); font-weight: bold;" th:text="${#numbers.formatDecimal(searchedUser.accounts.get(0).balance, 1, 'COMMA', 2, 'POINT')} + ' ₺'">0.00 ₺</div>
+                <!-- Alt Kısım: Detaylı Tablolar Grid -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                    
+                    <!-- Borsa & Döviz Portföyü -->
+                    <div>
+                        <h3 style="font-size: 1.1rem; color: var(--text); margin-bottom: 1rem; display: flex; align-items: center; gap:0.5rem;">📈 Borsa & Döviz Varlıkları</h3>
+                        <div th:if="${#lists.isEmpty(userPortfolios)}" style="color:var(--text-muted); font-size:0.9rem; background: rgba(255,255,255,0.02); padding:1rem; border-radius:6px;">Hiç varlığı bulunmuyor.</div>
+                        <div th:if="${not #lists.isEmpty(userPortfolios)}" style="max-height: 250px; overflow-y: auto;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid var(--border); color:var(--text-muted); text-align:left;">
+                                        <th style="padding:0.5rem;">Varlık</th>
+                                        <th style="padding:0.5rem; text-align:right;">Miktar/Lot</th>
+                                        <th style="padding:0.5rem; text-align:right;">Ort. Maliyet</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="p : ${userPortfolios}" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                        <td style="padding:0.5rem; font-weight:bold; color:var(--gold);" th:text="${p.currency}">USD</td>
+                                        <td style="padding:0.5rem; text-align:right;" th:text="${#numbers.formatDecimal(p.amount, 1, 'COMMA', 2, 'POINT')}">100</td>
+                                        <td style="padding:0.5rem; text-align:right; color:var(--text-muted);" th:text="${p.avgBuyRate != null ? p.avgBuyRate + ' ₺' : '-'}">32.00</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div style="background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 8px;">
-                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.25rem;">Ana IBAN Numarası</div>
-                        <div style="font-size: 0.9rem; color: var(--text); font-family: monospace; letter-spacing: 1px;" th:text="${searchedUser.accounts.get(0).getFormattedIban()}">TR00...</div>
+
+                    <!-- Kredi Geçmişi -->
+                    <div>
+                        <h3 style="font-size: 1.1rem; color: var(--text); margin-bottom: 1rem; display: flex; align-items: center; gap:0.5rem;">🏦 Kredi Geçmişi</h3>
+                        <div th:if="${#lists.isEmpty(userLoans)}" style="color:var(--text-muted); font-size:0.9rem; background: rgba(255,255,255,0.02); padding:1rem; border-radius:6px;">Hiç kredisi bulunmuyor.</div>
+                        <div th:if="${not #lists.isEmpty(userLoans)}" style="max-height: 250px; overflow-y: auto;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid var(--border); color:var(--text-muted); text-align:left;">
+                                        <th style="padding:0.5rem;">Tür</th>
+                                        <th style="padding:0.5rem; text-align:right;">Tutar</th>
+                                        <th style="padding:0.5rem; text-align:right;">Durum</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="l : ${userLoans}" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                        <td style="padding:0.5rem;">
+                                            <span th:text="${l.loanType}">IHTIYAC</span><br>
+                                            <small style="color:var(--text-muted);" th:text="${#temporals.format(l.createdAt, 'dd.MM.yy')}">01.01.26</small>
+                                        </td>
+                                        <td style="padding:0.5rem; text-align:right; font-weight:bold;" th:text="${#numbers.formatDecimal(l.principalAmount, 1, 'COMMA', 0, 'POINT')} + ' ₺'">10,000 ₺</td>
+                                        <td style="padding:0.5rem; text-align:right;">
+                                            <span th:if="${l.status == 'AKTIF'}" style="color:#059669; font-size:0.8rem; border:1px solid #059669; padding:2px 6px; border-radius:4px;">Aktif</span>
+                                            <span th:if="${l.status == 'ODENDI'}" style="color:var(--text-muted); font-size:0.8rem; border:1px solid var(--border); padding:2px 6px; border-radius:4px;">Ödendi</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
+
+                    <!-- Otomatik Ödemeler -->
+                    <div>
+                        <h3 style="font-size: 1.1rem; color: var(--text); margin-bottom: 1rem; display: flex; align-items: center; gap:0.5rem;">🔄 Otomatik Ödemeler</h3>
+                        <div th:if="${#lists.isEmpty(userAutoPayments)}" style="color:var(--text-muted); font-size:0.9rem; background: rgba(255,255,255,0.02); padding:1rem; border-radius:6px;">Hiç otomatik ödemesi bulunmuyor.</div>
+                        <div th:if="${not #lists.isEmpty(userAutoPayments)}" style="max-height: 250px; overflow-y: auto;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid var(--border); color:var(--text-muted); text-align:left;">
+                                        <th style="padding:0.5rem;">Kurum/Fatura</th>
+                                        <th style="padding:0.5rem; text-align:right;">Tutar</th>
+                                        <th style="padding:0.5rem; text-align:right;">Durum</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="ap : ${userAutoPayments}" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                        <td style="padding:0.5rem;" th:text="${ap.institutionName}">Elektrik</td>
+                                        <td style="padding:0.5rem; text-align:right;" th:text="${#numbers.formatDecimal(ap.amount, 1, 'COMMA', 2, 'POINT')} + ' ₺'">200.00 ₺</td>
+                                        <td style="padding:0.5rem; text-align:right;">
+                                            <span th:if="${ap.active}" style="color:#059669;">● Aktif</span>
+                                            <span th:if="${!ap.active}" style="color:#ef4444;">● İptal</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

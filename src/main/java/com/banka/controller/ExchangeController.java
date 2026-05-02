@@ -85,14 +85,50 @@ public class ExchangeController {
 
         List<Portfolio> portfolios = portfolioService.getUserPortfolios(user.getId());
         BigDecimal portfolioTotalTry = BigDecimal.ZERO;
+
+        // Portföy P/L hesaplama (V7)
+        List<Map<String, Object>> portfolioPnlList = new java.util.ArrayList<>();
+        // Kullanıcının mevcut lot/miktar bilgisi (alım-satım formunda göstermek için)
+        Map<String, BigDecimal> portfolioMap = new java.util.HashMap<>();
+
         for (Portfolio p : portfolios) {
+            if (p.getAmount().compareTo(BigDecimal.ZERO) <= 0) continue;
+
             Double rate = sellRates.get(p.getCurrency());
             if (rate == null && STOCKS.containsKey(p.getCurrency())) {
                 rate = STOCKS.get(p.getCurrency())[0];
             }
-            if (rate != null) {
-                portfolioTotalTry = portfolioTotalTry.add(p.getAmount().multiply(BigDecimal.valueOf(rate)));
+            if (rate == null) continue;
+
+            BigDecimal currentValue = p.getAmount().multiply(BigDecimal.valueOf(rate));
+            portfolioTotalTry = portfolioTotalTry.add(currentValue);
+            portfolioMap.put(p.getCurrency(), p.getAmount());
+
+            Map<String, Object> pnl = new java.util.HashMap<>();
+            pnl.put("currency", p.getCurrency());
+            pnl.put("amount", p.getAmount());
+            pnl.put("currentRate", rate);
+            pnl.put("currentValue", currentValue.setScale(2, java.math.RoundingMode.HALF_UP));
+            pnl.put("isStock", STOCKS.containsKey(p.getCurrency()));
+            pnl.put("displayName", STOCK_NAMES.getOrDefault(p.getCurrency(), p.getCurrency()));
+
+            BigDecimal avgBuy = p.getAvgBuyRate() != null ? p.getAvgBuyRate() : BigDecimal.ZERO;
+            BigDecimal totalCost = p.getTotalCost() != null ? p.getTotalCost() : BigDecimal.ZERO;
+            pnl.put("avgBuyRate", avgBuy.setScale(4, java.math.RoundingMode.HALF_UP));
+            pnl.put("totalCost", totalCost.setScale(2, java.math.RoundingMode.HALF_UP));
+
+            if (totalCost.compareTo(BigDecimal.ZERO) > 0) {
+                BigDecimal profitTry = currentValue.subtract(totalCost);
+                BigDecimal profitPct = profitTry.divide(totalCost, 4, java.math.RoundingMode.HALF_UP)
+                        .multiply(new BigDecimal("100"));
+                pnl.put("profitTry", profitTry.setScale(2, java.math.RoundingMode.HALF_UP).doubleValue());
+                pnl.put("profitPct", profitPct.setScale(2, java.math.RoundingMode.HALF_UP).doubleValue());
+            } else {
+                pnl.put("profitTry", 0.0);
+                pnl.put("profitPct", 0.0);
             }
+
+            portfolioPnlList.add(pnl);
         }
 
         model.addAttribute("user", user);
@@ -101,6 +137,8 @@ public class ExchangeController {
         model.addAttribute("sellRates", sellRates);
         model.addAttribute("portfolios", portfolios);
         model.addAttribute("portfolioTotalTry", portfolioTotalTry);
+        model.addAttribute("portfolioPnlList", portfolioPnlList);
+        model.addAttribute("portfolioMap", portfolioMap);
         model.addAttribute("stocks", STOCKS);
         model.addAttribute("stockNames", STOCK_NAMES);
 
