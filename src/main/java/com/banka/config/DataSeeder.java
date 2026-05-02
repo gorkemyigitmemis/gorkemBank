@@ -234,7 +234,7 @@ public class DataSeeder implements CommandLineRunner {
         String[] loanTypes = {"IHTIYAC", "KONUT", "TASIT"};
         BigDecimal[] rates = {new BigDecimal("3.29"), new BigDecimal("2.59"), new BigDecimal("2.89")};
         int loanCount = 0;
-        for (int i = 2; i < allUsers.size() && loanCount < 40; i += 3) {
+        for (int i = 1; i < allUsers.size() && loanCount < 80; i += 2) {
             User loanUser = allUsers.get(i);
             Account loanAccount = allAccounts.get(i);
             int typeIdx = random.nextInt(3);
@@ -277,7 +277,7 @@ public class DataSeeder implements CommandLineRunner {
         String[] currencies = {"USD", "EUR", "GBP", "XAU", "THYAO", "ASELS", "BIMAS", "KCHOL", "GARAN"};
         double[] approxRates = {44.04, 51.88, 59.68, 4205.0, 319.50, 89.35, 178.90, 198.40, 142.30};
         int portfolioCount = 0;
-        for (int i = 1; i < allUsers.size() && portfolioCount < 50; i += 2) {
+        for (int i = 1; i < allUsers.size() && portfolioCount < 150; i++) {
             User pUser = allUsers.get(i);
             int numAssets = 1 + random.nextInt(3);
             Set<String> usedCurrencies = new HashSet<>();
@@ -326,6 +326,21 @@ public class DataSeeder implements CommandLineRunner {
         demoGold.setTotalCost(new BigDecimal("7900.00"));
         portfolioRepository.save(demoGold);
         System.out.println("   📈 Demo kullanıcıya portföy oluşturuldu (USD, THYAO, XAU)");
+
+        // 12. Rastgele kullanıcılara otomatik ödeme talimatları ekle
+        String[] apCategories = {"ELEKTRIK", "SU", "DOGALGAZ", "INTERNET", "TELEFON"};
+        String[] apProviders = {"EDAŞ", "İSKİ", "İGDAŞ", "Türk Telekom", "Turkcell"};
+        int apCount = 0;
+        for (int i = 1; i < allUsers.size() && apCount < 60; i += 2) {
+            User apUser = allUsers.get(i);
+            Account apAccount = allAccounts.get(i);
+            int catIdx = random.nextInt(apCategories.length);
+            String subscriberNo = String.format("%010d", random.nextInt(2000000000));
+            BigDecimal apAmount = new BigDecimal(100 + random.nextInt(400)).setScale(2, java.math.RoundingMode.HALF_UP);
+            createAutoPaymentSeed(apUser, apAccount, apCategories[catIdx], apProviders[catIdx], subscriberNo, apAmount);
+            apCount++;
+        }
+        System.out.println("   🔄 " + apCount + " rastgele otomatik ödeme talimatı oluşturuldu");
 
         System.out.println("✅ Tüm demo veriler başarıyla oluşturuldu!");
         System.out.println("=".repeat(50));
